@@ -10,6 +10,8 @@ public class UnitHealth : MonoBehaviour
     public int MaxHealth => _maxHealth;
     public int Health { get; private set; }
     public bool IsDead { get; private set; }
+    public bool IsTargeted => _targetedUnits > 0;
+    private int _targetedUnits;
 
     public Action<int> OnTakeDamage { get; set; }
     public Action<UnitHealth> OnDead { get; set; }
@@ -31,5 +33,16 @@ public class UnitHealth : MonoBehaviour
             IsDead = true;
             OnDead?.Invoke(this);
         }
+    }
+
+    public void AddTargetedUnit()
+    {
+        _targetedUnits++;
+    }
+
+
+    public void RemoveTargetedUnit()
+    {
+        _targetedUnits--;
     }
 }

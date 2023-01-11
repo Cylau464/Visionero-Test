@@ -35,8 +35,11 @@ namespace States.Characters
 
         public override void Exit()
         {
-            if(_target != null)
+            if (_target != null)
+            {
+                _target.RemoveTargetedUnit();
                 _target.OnDead -= OnTargetDead;
+            }
 
             Machine.AnimationController.OnGiveDamage -= GiveDamage;
             Machine.AnimationController.OnAttackEnd -= AttackEnd;
@@ -77,8 +80,11 @@ namespace States.Characters
 
         private void GiveDamage()
         {
-            if(_target != null)
-                _target.TakeDamage(Machine.Damage);
+            if (_target != null)
+            {
+                if(Machine.Accuracy >= Random.value)
+                    _target.TakeDamage(Machine.Damage);
+            }
         }
 
         private void AttackEnd()
@@ -97,7 +103,12 @@ namespace States.Characters
 
         protected virtual UnitHealth GetTarget()
         {
-            return Machine.GetClosestTarget();
+            UnitHealth target = Machine.GetClosestTarget();
+
+            if (target != null)
+                target.AddTargetedUnit();
+
+            return target;
         }
     }
 }

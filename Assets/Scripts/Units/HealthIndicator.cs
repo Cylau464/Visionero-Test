@@ -14,8 +14,8 @@ namespace Units
         {
             _healthBar.value = GetTotalHealth();
 
-            if (_healthBar.value == 0f)
-                StartCoroutine(FadeOut());
+            //if (_healthBar.value == 0f)
+            //    StartCoroutine(FadeOut());
         }
 
         protected void InitializeBar()

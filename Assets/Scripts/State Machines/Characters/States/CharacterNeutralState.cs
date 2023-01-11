@@ -28,7 +28,7 @@
 
         public override void InitializeSubState()
         {
-            if (Machine.Agent.ReachedDestinationOrGaveUp() == false)
+            if (Machine.AIPath.reachedDestination == false)// Machine.Agent.ReachedDestinationOrGaveUp() == false)
                 SetSubState(Factory.Move());
             else
                 SetSubState(Factory.Idle());
@@ -42,7 +42,7 @@
         private void OnFindTarget(CharacterStateMachine machine)
         {
             if (Machine.IgnoreTargetsWhenMove == true
-                && Machine.Agent.remainingDistance > Machine.StopIgnoringDestinationDistance)
+                && Machine.AIPath.remainingDistance /*Machine.Agent.remainingDistance */> Machine.StopIgnoringDestinationDistance)
                 return;
 
             SwitchState(Factory.Battle());

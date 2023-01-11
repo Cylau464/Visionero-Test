@@ -2,6 +2,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor.Sprites;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
@@ -22,12 +24,37 @@ namespace Units
 
         protected List<CharacterStateMachine> _units = new List<CharacterStateMachine>();
         private bool _groupHaveTarget;
+        private Vector3 _centerPosition;
 
         [Inject] private CharacterStateMachine.Factory _unitFactory;
 
         public Action<UnitsGroup> OnGroupDead { get; set; }
 
+        private Vector3[] _positions;
+        private float _radius;
+
         protected virtual void Start()
+        {
+            SpawnUnits();
+        }
+
+        private void OnDestroy()
+        {
+            foreach (CharacterStateMachine unit in _units)
+            {
+                unit.OnDead -= OnUnitDead;
+                //unit.OnFindTarget -= OnUnitFindTarget;
+                //unit.OnLostAllTargets -= OnUnitLostAllTargets;
+            }
+        }
+
+        protected virtual void Update()
+        {
+            if(_units.Count > 0)
+                _groupFollowObject.position = CalculateCenterOfUnits();
+        }
+
+        private void SpawnUnits()
         {
             Vector3[] positions = GetUnitsPositions(transform.position, _unitsCount);
             CharacterStateMachine unit;
@@ -36,34 +63,25 @@ namespace Units
             for (int i = 0; i < _unitsCount; i++)
             {
                 unit = _unitFactory.Create(_unitPrefab);
-                unit.transform.position = positions[i];
-                unit.transform.parent = _unitsPivot;
-
-                unit.OnDead += OnUnitDead;
-                unit.OnFindTarget += OnUnitFindTarget;
-                unit.OnLostAllTargets += OnUnitLostAllTargets;
-
-                _units.Add(unit);
-                unitsHealth[i] = unit.Health;
+                unitsHealth[i] = InitUnit(unit, positions[i], i);
             }
 
             _healthIndicator.Init(unitsHealth);
         }
 
-        private void OnDestroy()
+        private UnitHealth InitUnit(CharacterStateMachine unit, Vector3 position, int index)
         {
-            foreach (CharacterStateMachine unit in _units)
-            {
-                unit.OnDead -= OnUnitDead;
-                unit.OnFindTarget -= OnUnitFindTarget;
-                unit.OnLostAllTargets -= OnUnitLostAllTargets;
-            }
-        }
+            unit.transform.position = position;
+            unit.transform.parent = _unitsPivot;
+            unit.name += " " + index;
+            unit.SetUnitsGroup(this);
 
-        protected virtual void Update()
-        {
-            if(_units.Count > 0)
-                _groupFollowObject.position = CalculateCenterOfUnits();
+            unit.OnDead += OnUnitDead;
+            //unit.OnFindTarget += OnUnitFindTarget;
+            //unit.OnLostAllTargets += OnUnitLostAllTargets;
+
+            _units.Add(unit);
+            return unit.Health;
         }
 
         private void OnUnitDead(CharacterStateMachine unit)
@@ -129,44 +147,110 @@ namespace Units
             {
                 if (i >= _units.Count) break;
 
-                _units[i].Agent.SetDestination(destinations[i]);
+                _units[i].AIPath.destination = destinations[i];//Agent.SetDestination(destinations[i]);
             }
         }
 
         protected Vector3[] GetUnitsPositions(Vector3 centerPosition, int unitsCount)
         {
-            Vector3[] positions = new Vector3[unitsCount];
-            float sumRadius = _unitPrefab.Agent.radius * 2f;
+            _centerPosition = centerPosition;
+            //CirclePacker cPicker = new CirclePacker(centerPosition, unitsCount, _unitPrefab.Agent.radius, _unitPrefab.Agent.radius);
+            //List<Circle> circles;
+            List<Vector3> positions = new List<Vector3>(unitsCount);
+            int iterations = 0;
+            float time = Time.realtimeSinceStartup;
+
+            //while (true)
+            //{
+            //    bool updated = cPicker.Update();
+            //    circles = cPicker.mCircles;
+            //    positions.Clear();
+
+            //    foreach (Circle circle in circles)
+            //    {
+            //        Vector3 position = new Vector3(circle.mCenter.x, _centerPosition.y, circle.mCenter.y);
+            //        positions.Add(position);
+            //    }
+
+            //    _positions = positions.ToArray();
+
+            //    iterations++;
+            //    if (updated == false) break;
+            //}
+
+            //Debug.Log(iterations + " iterations by time: " + (Time.realtimeSinceStartup - time));
+
+            float sumRadius = _unitPrefab.AIPath.radius/* Agent.radius */* 2f;
             float minSeparationSq = _minDistanceBtwUnits * _minDistanceBtwUnits;
 
-            for (int i = 0; i < positions.Length; i++)
+            for (int i = 0; i < unitsCount; i++)
             {
                 Vector2 random = Random.insideUnitCircle;
-                positions[i] = new Vector3(centerPosition.x + random.x, centerPosition.y, centerPosition.z + random.y);
+                positions.Add(new Vector3(centerPosition.x + random.x, centerPosition.y, centerPosition.z + random.y));
             }
 
-            for (int i = 0; i < positions.Length - 1; i++)
+            while (true)
             {
-                for (int j = i + 1; j < positions.Length; j++)
+                bool changed = false;
+                positions.Sort(SortByDistanceToCenter);
+
+                for (int i = 0; i < positions.Count - 1; i++)
                 {
-                    if (i == j) continue;
-
-                    Vector3 AB = positions[j] - positions[i];
-                    float distance = AB.sqrMagnitude - minSeparationSq;
-                    float minSepSq = Mathf.Min(distance, minSeparationSq);
-                    distance -= minSepSq;
-
-                    if (distance < (sumRadius * sumRadius) - 0.01f)
+                    for (int j = i + 1; j < positions.Count; j++)
                     {
-                        AB.Normalize();
-                        AB *= (float)((sumRadius - Mathf.Sqrt(distance)) * 0.5f);
-                        positions[j] += AB;
-                        positions[i] -= AB;
+                        if (i == j) continue;
+
+                        Vector3 AB = positions[j] - positions[i];
+                        float distance = AB.sqrMagnitude - minSeparationSq;
+                        float minSepSq = Mathf.Min(distance, minSeparationSq);
+                        distance -= minSepSq;
+
+                        if (distance < (sumRadius * sumRadius) - 0.01f)
+                        {
+                            changed = true;
+                            AB.Normalize();
+                            AB *= (float)((sumRadius - Mathf.Sqrt(distance)) * 0.5f);
+                            positions[j] += AB;
+                            positions[i] -= AB;
+                        }
                     }
                 }
+
+                iterations++;
+
+                if (changed == false) break;
             }
 
-            return positions;
+            Debug.Log(iterations + " iterations by time: " + (Time.realtimeSinceStartup - time));
+
+            _positions = positions.ToArray();
+            _radius = _unitPrefab.AIPath/*Agent*/.radius;
+            return positions.ToArray();
+        }
+
+        private int SortByDistanceToCenter(Vector3 v1, Vector3 v2)
+        {
+            float distance1 = Vector3.Distance(v1, _centerPosition);
+            float distance2 = Vector3.Distance(v2, _centerPosition);
+            
+            if (distance1 < distance2)
+                return -1;
+            else if (distance1 > distance2)
+                return 1;
+            else
+                return 0;
+        }
+
+        private void OnDrawGizmos()
+        {
+            foreach (Vector3 pos in _positions)
+            {
+                Gizmos.color = Color.cyan;
+                Gizmos.DrawWireSphere(pos, _radius);
+            }
+
+            Gizmos.color = Color.white;
+            Gizmos.DrawWireCube(_centerPosition, Vector3.one);
         }
 
         private Vector3 CalculateCenterOfUnits()

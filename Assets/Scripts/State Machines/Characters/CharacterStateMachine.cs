@@ -4,6 +4,8 @@ using UnityEngine.AI;
 using System.Collections.Generic;
 using Zenject;
 using Animations;
+using Units;
+using Pathfinding;
 
 namespace States.Characters
 {
@@ -13,6 +15,8 @@ namespace States.Characters
 
         [SerializeField] protected NavMeshAgent _agent;
         public NavMeshAgent Agent => _agent;
+        [SerializeField] private AIPath _aiPath;
+        public AIPath AIPath => _aiPath;
         [SerializeField] protected UnitHealth _health;
         public UnitHealth Health => _health;
         [SerializeField] protected CharacterAnimationController _animationController;
@@ -36,6 +40,8 @@ namespace States.Characters
         public int Damage => _damage;
         [SerializeField] private float _attackInterval = 1f;
         public float AttackInterval => _attackInterval;
+        [SerializeField, Range(0f, 1f)] private float _accuracy = .5f;
+        public float Accuracy => _accuracy;
 
         private List<UnitHealth> _targets = new List<UnitHealth>();
         public IList<UnitHealth> Targets => _targets.AsReadOnly();
@@ -67,10 +73,16 @@ namespace States.Characters
             CurrentState.Enter();
         }
 
+        public virtual void SetUnitsGroup(UnitsGroup unitsGroup)
+        {
+
+        }
+
         public virtual void Dead()
         {
             _collider.enabled = false;
-            _agent.enabled = false;
+            //_agent.enabled = false;
+            _aiPath.enabled = false;
             OnDead?.Invoke(this);
         }
 
@@ -134,18 +146,28 @@ namespace States.Characters
 
             UnitHealth closestTarget = null;
             float minDistance = float.MaxValue;
+            bool onlyFreeTargets = true;
 
-            foreach (UnitHealth target in targets)
+            for (int i = 0; i < 2; i++)
             {
-                if (target.IsDead == true) continue;
-
-                float distance = Vector3.Distance(transform.position, target.transform.position);
-                
-                if (distance < minDistance)
+                foreach (UnitHealth target in targets)
                 {
-                    minDistance = distance;
-                    closestTarget = target;
+                    if (target.IsDead == true) continue;
+
+                    if (onlyFreeTargets == true && target.IsTargeted == true) continue;
+
+                    float distance = Vector3.Distance(transform.position, target.transform.position);
+                
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                        closestTarget = target;
+                    }
                 }
+
+                onlyFreeTargets = false;
+
+                if (closestTarget != null) break;
             }
 
             return closestTarget;

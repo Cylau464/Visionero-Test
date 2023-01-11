@@ -9,7 +9,6 @@ namespace Units
         [SerializeField] private LayerMask _selectableMask;
 
         private Camera _camera;
-        private Ray _ray;
 
         private ISelectable _selected;
 
@@ -24,22 +23,28 @@ namespace Units
         {
             if (Input.GetMouseButtonDown(0) == true)
             {
-                _ray = _camera.ScreenPointToRay(Input.mousePosition);
-                
-                if(TrySelectUnits() == false)
-                    GetPointOnNavMesh();
+                TrySelectUnits();
+            }
+
+            if (Input.GetMouseButtonDown(1) == true)
+            {
+                GetPointOnNavMesh();
             }
         }
 
         private void GetPointOnNavMesh()
         {
-            if (Physics.Raycast(_ray, out RaycastHit hit, 100f, _navMeshMask) == true)
+            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(ray, out RaycastHit hit, 100f, _navMeshMask) == true)
                 OnSetDestination?.Invoke(hit.point);
         }
 
         private bool TrySelectUnits()
         {
-            if (Physics.Raycast(_ray, out RaycastHit hit, 100f, _selectableMask) == true)
+            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(ray, out RaycastHit hit, 100f, _selectableMask) == true)
             {
                 ISelectable curSelected = _selected;
                 _selected = hit.collider.GetComponentInParent<ISelectable>();

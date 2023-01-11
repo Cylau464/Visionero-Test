@@ -15,7 +15,7 @@
             if (Machine.Targets.Count > 0)
             {
                 if (Machine.IgnoreTargetsWhenMove == true
-                    && Machine.Agent.remainingDistance <= Machine.StopIgnoringDestinationDistance)
+                    && Machine.AIPath.remainingDistance /*Machine.Agent.remainingDistance */<= Machine.StopIgnoringDestinationDistance)
                     SwitchState(Factory.Battle());
             }
         }

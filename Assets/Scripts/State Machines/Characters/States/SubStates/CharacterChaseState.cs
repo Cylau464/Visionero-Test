@@ -20,7 +20,8 @@ namespace States.Characters
 
             if (distanceToTarget <= Machine.AttackRadius)
             {
-                Machine.Agent.SetDestination(Machine.transform.position);
+                Machine.AIPath.destination = Machine.transform.position;
+                //Machine.Agent.SetDestination(Machine.transform.position);
                 SwitchState(Factory.Attack(_target));
             }
         }
@@ -32,7 +33,8 @@ namespace States.Characters
 
         public override void Exit()
         {
-
+            if (_target != null)
+                _target.RemoveTargetedUnit();
         }
 
         public override void InitializeSubState()
@@ -48,10 +50,11 @@ namespace States.Characters
 
                 if (_target == null) return;
 
-                Machine.Agent.SetDestination(_target.transform.position);
+                Machine.AIPath.destination = _target.transform.position;
+                //Machine.Agent.SetDestination(_target.transform.position);
             }
 
-            Machine.AnimationController.SetMoveSpeed(Machine.Agent.velocity.magnitude);
+            Machine.AnimationController.SetMoveSpeed(Machine.AIPath/*Agent*/.velocity.magnitude);
             CheckSwitchStates();
         }
 
@@ -59,7 +62,10 @@ namespace States.Characters
         {
             UnitHealth target = Machine.GetClosestTarget();
             _curCheckDelay = Time.time + _checkClosestTargetInterval;
-            
+
+            if (target != null)
+                target.AddTargetedUnit();
+
             return target;
         }
     }

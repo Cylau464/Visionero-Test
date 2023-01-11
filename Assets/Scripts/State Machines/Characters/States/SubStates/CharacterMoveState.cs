@@ -6,7 +6,7 @@
 
         public override void CheckSwitchStates()
         {
-            if (Machine.Agent.ReachedDestinationOrGaveUp() == true)
+            if (Machine.AIPath.reachedDestination/*Agent.ReachedDestinationOrGaveUp()*/ == true)
                 SwitchState(Factory.Idle());
         }
 
@@ -28,7 +28,7 @@
         public override void Update()
         {
             CheckSwitchStates();
-            Machine.AnimationController.SetMoveSpeed(Machine.Agent.velocity.magnitude);
+            Machine.AnimationController.SetMoveSpeed(Machine.AIPath/*Agent*/.velocity.magnitude);
         }
     }
 }

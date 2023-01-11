@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿using States.Characters;
+using States.Characters.Player;
+using System;
+using Unity.VisualScripting;
+using UnityEngine;
 
 namespace Units
 {
@@ -6,9 +10,12 @@ namespace Units
     {
         [Space]
         [SerializeField] private Collider _groupSelectTrigger;
-        [SerializeField] private SelectedIndicator _selectedIndicator;
+        //[SerializeField] private SelectedIndicator _selectedIndicator;
 
         public bool IsSelected { get; private set; }
+
+        public Action OnSelected { get; set; }
+        public Action OnUnselected { get; set; }
 
         protected override void Update()
         {
@@ -22,14 +29,16 @@ namespace Units
         {
             UnitCommander.OnSetDestination += OnSetDestination;
             IsSelected = true;
-            _selectedIndicator.Enable();
+            OnSelected?.Invoke();
+            //_selectedIndicator.Enable();
         }
 
         public void Unselect()
         {
             UnitCommander.OnSetDestination -= OnSetDestination;
             IsSelected = false;
-            _selectedIndicator.Disable();
+            OnUnselected?.Invoke();
+            //_selectedIndicator.Disable();
         }
 
         private void OnSetDestination(Vector3 destination)
