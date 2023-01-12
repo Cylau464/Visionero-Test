@@ -693,7 +693,7 @@ namespace Pathfinding {
 				path[i] = path[count-i-1];
 				path[count - i - 1] = tmp;
 			}
-
+			Debug.Log("TRACE" + count);
 			for (int i = 0; i < count; i++) {
 				vectorPath.Add((Vector3)path[i].position);
 			}

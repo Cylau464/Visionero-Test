@@ -30,7 +30,7 @@ namespace Units
 
         public Action<UnitsGroup> OnGroupDead { get; set; }
 
-        private Vector3[] _positions;
+        private Vector3[] _positions = new Vector3[] { };
         private float _radius;
 
         protected virtual void Start()

@@ -487,7 +487,7 @@ namespace Pathfinding {
 			}
 
 			Gizmos.color = new Color(0, 1F, 0, 1F);
-
+			
 			if (lastCompletedVectorPath != null) {
 				for (int i = 0; i < lastCompletedVectorPath.Count-1; i++) {
 					Gizmos.DrawLine(lastCompletedVectorPath[i], lastCompletedVectorPath[i+1]);
