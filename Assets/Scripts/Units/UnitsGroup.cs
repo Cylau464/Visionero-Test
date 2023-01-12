@@ -141,47 +141,55 @@ namespace Units
             _groupHaveTarget = false;
         }
 
-        protected void SetDestinations(Vector3[] destinations)
+        protected void SetDestinations(List<Vector3> destinations)
         {
-            for (int i = 0; i < destinations.Length; i++)
+            float distance, curDistance = float.MaxValue;
+            int unitIndex = 0;
+            float time = Time.realtimeSinceStartup;
+            List<CharacterStateMachine> units = new List<CharacterStateMachine>(_units);
+            units = units.OrderBy(x => (x.transform.position - destinations[0]).sqrMagnitude).ToList();
+            destinations.RemoveAt(0);
+            destinations = destinations.OrderByDescending(x => (x - units[units.Count - 1].transform.position).sqrMagnitude).ToList();
+
+            for (int i = 0; i < destinations.Count; i++)
             {
                 if (i >= _units.Count) break;
 
-                _units[i].AIPath.destination = destinations[i];//Agent.SetDestination(destinations[i]);
+                for (int j = 0; j < units.Count; j++)
+                {
+                    distance = (destinations[i] - units[j].transform.position).sqrMagnitude;
+
+                    if (distance < curDistance)
+                    {
+                        curDistance = distance;
+                        unitIndex = j;
+                    }
+                }
+
+                units[unitIndex].AIPath.destination = destinations[i];
+                units.RemoveAt(unitIndex);
+                curDistance = float.MaxValue;
+                unitIndex = 0;
+                //_units[i].AIPath.destination = destinations[i];//Agent.SetDestination(destinations[i]);
             }
+
+            Debug.LogWarning("Time spent accumulating units: " + (Time.realtimeSinceStartup - time));
         }
 
+        /// <summary>
+        /// </summary>
+        /// <param name="centerPosition"></param>
+        /// <param name="unitsCount"></param>
+        /// <returns>Array with first element equals centerPosition</returns>
         protected Vector3[] GetUnitsPositions(Vector3 centerPosition, int unitsCount)
         {
             _centerPosition = centerPosition;
-            //CirclePacker cPicker = new CirclePacker(centerPosition, unitsCount, _unitPrefab.Agent.radius, _unitPrefab.Agent.radius);
-            //List<Circle> circles;
             List<Vector3> positions = new List<Vector3>(unitsCount);
             int iterations = 0;
             float time = Time.realtimeSinceStartup;
-
-            //while (true)
-            //{
-            //    bool updated = cPicker.Update();
-            //    circles = cPicker.mCircles;
-            //    positions.Clear();
-
-            //    foreach (Circle circle in circles)
-            //    {
-            //        Vector3 position = new Vector3(circle.mCenter.x, _centerPosition.y, circle.mCenter.y);
-            //        positions.Add(position);
-            //    }
-
-            //    _positions = positions.ToArray();
-
-            //    iterations++;
-            //    if (updated == false) break;
-            //}
-
-            //Debug.Log(iterations + " iterations by time: " + (Time.realtimeSinceStartup - time));
-
             float sumRadius = _unitPrefab.AIPath.radius/* Agent.radius */* 2f;
             float minSeparationSq = _minDistanceBtwUnits * _minDistanceBtwUnits;
+            positions.Add(centerPosition);
 
             for (int i = 0; i < unitsCount; i++)
             {

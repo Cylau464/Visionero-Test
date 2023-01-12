@@ -1,6 +1,7 @@
 ﻿using States.Characters;
 using States.Characters.Player;
 using System;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -25,6 +26,11 @@ namespace Units
                 Unselect();
         }
 
+        private void OnDestroy()
+        {
+            UnitCommander.OnSetDestination -= OnSetDestination;
+        }
+
         public void Select()
         {
             UnitCommander.OnSetDestination += OnSetDestination;
@@ -44,7 +50,7 @@ namespace Units
         private void OnSetDestination(Vector3 destination)
         {
             Vector3[] destinations = GetUnitsPositions(destination, _units.Count);
-            SetDestinations(destinations);
+            SetDestinations(destinations.ToList());
             Unselect();
         }
 

@@ -181,7 +181,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1
   penalty: 1000
-  randomStep: 10
+  randomStep: 100
 --- !u!114 &5167928629612118958
 MonoBehaviour:
   m_ObjectHideFlags: 0
