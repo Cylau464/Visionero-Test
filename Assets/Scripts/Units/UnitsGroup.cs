@@ -1,8 +1,10 @@
-﻿using States.Characters;
+﻿using Pathfinding;
+using States.Characters;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Units.Attributes;
 using UnityEditor.Sprites;
 using UnityEngine;
 using Zenject;
@@ -19,7 +21,8 @@ namespace Units
         [SerializeField] private float _minDistanceBtwUnits = .5f;
         [Space]
         [SerializeField] private UnitsGroupHealthIndicator _healthIndicator;
-        [SerializeField] private Transform _groupFollowObject;
+        //[SerializeField] private Transform _groupFollowObject;
+        [SerializeField] private AIPath _centerOfGroup;
 
 
         protected List<CharacterStateMachine> _units = new List<CharacterStateMachine>();
@@ -43,6 +46,7 @@ namespace Units
             foreach (CharacterStateMachine unit in _units)
             {
                 unit.OnDead -= OnUnitDead;
+                unit.OnAttackTypeSwitched -= OnAttackTypeSwitched;
                 //unit.OnFindTarget -= OnUnitFindTarget;
                 //unit.OnLostAllTargets -= OnUnitLostAllTargets;
             }
@@ -50,8 +54,8 @@ namespace Units
 
         protected virtual void Update()
         {
-            if(_units.Count > 0)
-                _groupFollowObject.position = CalculateCenterOfUnits();
+            //if(_units.Count > 0)
+            //    _groupFollowObject.position = CalculateCenterOfUnits();
         }
 
         private void SpawnUnits()
@@ -77,6 +81,7 @@ namespace Units
             unit.SetUnitsGroup(this);
 
             unit.OnDead += OnUnitDead;
+            unit.OnAttackTypeSwitched += OnAttackTypeSwitched;
             //unit.OnFindTarget += OnUnitFindTarget;
             //unit.OnLostAllTargets += OnUnitLostAllTargets;
 
@@ -143,36 +148,44 @@ namespace Units
 
         protected void SetDestinations(List<Vector3> destinations)
         {
+            Vector3 centerPosition = destinations[0];
+            destinations.RemoveAt(0);
             float distance, curDistance = float.MaxValue;
             int unitIndex = 0;
             float time = Time.realtimeSinceStartup;
             List<CharacterStateMachine> units = new List<CharacterStateMachine>(_units);
-            units = units.OrderBy(x => (x.transform.position - destinations[0]).sqrMagnitude).ToList();
-            destinations.RemoveAt(0);
+            units = units.OrderBy(x => (x.transform.position - centerPosition).sqrMagnitude).ToList();
             destinations = destinations.OrderByDescending(x => (x - units[units.Count - 1].transform.position).sqrMagnitude).ToList();
 
-            for (int i = 0; i < destinations.Count; i++)
+            if (destinations.Count > 1)
             {
-                if (i >= _units.Count) break;
-
-                for (int j = 0; j < units.Count; j++)
+                for (int i = 0; i < destinations.Count; i++)
                 {
-                    distance = (destinations[i] - units[j].transform.position).sqrMagnitude;
+                    if (i >= _units.Count) break;
 
-                    if (distance < curDistance)
+                    for (int j = 0; j < units.Count; j++)
                     {
-                        curDistance = distance;
-                        unitIndex = j;
-                    }
-                }
+                        distance = (destinations[i] - units[j].transform.position).sqrMagnitude;
 
-                units[unitIndex].AIPath.destination = destinations[i];
-                units.RemoveAt(unitIndex);
-                curDistance = float.MaxValue;
-                unitIndex = 0;
-                //_units[i].AIPath.destination = destinations[i];//Agent.SetDestination(destinations[i]);
+                        if (distance < curDistance)
+                        {
+                            curDistance = distance;
+                            unitIndex = j;
+                        }
+                    }
+
+                    units[unitIndex].AIPath.destination = destinations[i];
+                    units.RemoveAt(unitIndex);
+                    curDistance = float.MaxValue;
+                    unitIndex = 0;
+                }
+            }
+            else
+            {
+                units[0].AIPath.destination = centerPosition;
             }
 
+            _centerOfGroup.destination = centerPosition;
             Debug.LogWarning("Time spent accumulating units: " + (Time.realtimeSinceStartup - time));
         }
 
@@ -202,7 +215,7 @@ namespace Units
                 bool changed = false;
                 positions.Sort(SortByDistanceToCenter);
 
-                for (int i = 0; i < positions.Count - 1; i++)
+                for (int i = 1; i < positions.Count - 1; i++)
                 {
                     for (int j = i + 1; j < positions.Count; j++)
                     {
@@ -247,6 +260,16 @@ namespace Units
                 return 1;
             else
                 return 0;
+        }
+
+        private void OnAttackTypeSwitched(CharacterStateMachine fromUnit, AttackType attackType)
+        {
+            foreach (CharacterStateMachine unit in _units)
+            {
+                if (unit == fromUnit) continue;
+
+                unit.SwitchAttackType(attackType, false);
+            }
         }
 
         private void OnDrawGizmos()

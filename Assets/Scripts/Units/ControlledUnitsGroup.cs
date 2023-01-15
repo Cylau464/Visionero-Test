@@ -1,8 +1,5 @@
-﻿using States.Characters;
-using States.Characters.Player;
-using System;
+﻿using System;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Units
@@ -33,6 +30,7 @@ namespace Units
 
         public void Select()
         {
+            // Убрать выбор мёртвых юнитов
             UnitCommander.OnSetDestination += OnSetDestination;
             IsSelected = true;
             OnSelected?.Invoke();

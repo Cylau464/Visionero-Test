@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Units.Attributes;
+using UnityEngine;
 
 namespace States.Characters
 {
@@ -19,7 +20,7 @@ namespace States.Characters
 
             float distanceToTarget = Vector3.Distance(Machine.transform.position, _target.transform.position) - _target.ExtraRangeForAttack;
             
-            if (_canAttack == true && distanceToTarget > Machine.AttackRadius)
+            if (_canAttack == true && distanceToTarget > Machine.CurrentAttack.Distance)
                 SwitchState(Factory.Chase());
         }
 
@@ -30,7 +31,8 @@ namespace States.Characters
             Machine.AnimationController.OnGiveDamage += GiveDamage;
             Machine.AnimationController.OnAttackEnd += AttackEnd;
             Machine.AnimationController.SetMoveSpeed(0f);
-            Attack();
+            _attackDelay = Time.time + Machine.CurrentAttack.PrepareTime;
+
         }
 
         public override void Exit()
@@ -73,7 +75,7 @@ namespace States.Characters
 
         private void Attack()
         {
-            _attackDelay = Time.time + Machine.AttackInterval;
+            _attackDelay = Time.time + Machine.CurrentAttack.PrepareTime;
             Machine.AnimationController.Attack();
             _canAttack = false;
         }
@@ -82,8 +84,15 @@ namespace States.Characters
         {
             if (_target != null)
             {
-                if(Machine.Accuracy >= Random.value)
-                    _target.TakeDamage(Machine.Damage);
+                if (Machine.CurrentAttackType == AttackType.Range)
+                {
+                    if(Machine.RangeAttack.Accuracy >= Random.value * 100)
+                        _target.TakeHit();
+                }
+                else
+                {
+                    _target.TakeHit();
+                }
             }
         }
 
@@ -105,7 +114,7 @@ namespace States.Characters
         {
             UnitHealth target = Machine.GetClosestTarget();
 
-            if (target != null)
+            if (target != null && target != _target)
                 target.AddTargetedUnit();
 
             return target;

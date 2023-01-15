@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47e8cb9522004fa4ea8f75b28f2ae2ec, type: 3}
+  m_Name: Unit Config
+  m_EditorClassIdentifier: 
+  <Health>k__BackingField: 1
+  <Movement>k__BackingField:
+    <MoveSpeed>k__BackingField: 10
+    <RotationSpeed>k__BackingField: 480
+  <Combat>k__BackingField:
+    <AttackType>k__BackingField: 2
+    <MaxDistanceFromPosition>k__BackingField: 1
+    <AgroRadius>k__BackingField: 15
+    <Melee>k__BackingField:
+      <PrepareTime>k__BackingField: 1.5
+      <Distance>k__BackingField: 2
+    <Range>k__BackingField:
+      <PrepareTime>k__BackingField: 1
+      <Distance>k__BackingField: 15
+      <MinDistance>k__BackingField: 2
+      <AimTime>k__BackingField: 1
+      <Accuracy>k__BackingField: 25

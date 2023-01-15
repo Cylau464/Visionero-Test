@@ -6,15 +6,16 @@ using Zenject;
 using Animations;
 using Units;
 using Pathfinding;
+using Units.Attributes;
 
 namespace States.Characters
 {
     public abstract class CharacterStateMachine : BaseStateMachine
     {
-        [SerializeField] private int _targetsCount;
-
-        [SerializeField] protected NavMeshAgent _agent;
-        public NavMeshAgent Agent => _agent;
+        [SerializeField] private UnitConfig _config;
+        [Space]
+        //[SerializeField] protected NavMeshAgent _agent;
+        //public NavMeshAgent Agent => _agent;
         [SerializeField] private AIPath _aiPath;
         public AIPath AIPath => _aiPath;
         [SerializeField] protected UnitHealth _health;
@@ -23,31 +24,48 @@ namespace States.Characters
         public CharacterAnimationController AnimationController => _animationController;
         [SerializeField] private Collider _collider;
 
-        [Header("Agro Properties")]
+        [Header("Combat Properties")]
         [SerializeField] private SphereCollider _agroTrigger;
-        [SerializeField] private float _agroRadius = 5f;
+        //[SerializeField] private float _agroRadius = 5f;
         [SerializeField] private LayerMask _targetMask;
-        [SerializeField] private bool _ignoreTargetsWhenMove;
-        public bool IgnoreTargetsWhenMove => _ignoreTargetsWhenMove;
-        [SerializeField] private float _stopIgnoringDestinationDistance = 2f;
-        public float StopIgnoringDestinationDistance => _stopIgnoringDestinationDistance;
+        //[SerializeField] private bool _ignoreTargetsWhenMove;
+        //public bool IgnoreTargetsWhenMove => _ignoreTargetsWhenMove;
+        //[SerializeField] private float _stopIgnoringDestinationDistance = 2f;
+        //public float StopIgnoringDestinationDistance => _stopIgnoringDestinationDistance;
 
 
-        [Header("Attack Properties")]
-        [SerializeField] private float _attackRadius = 1f;
-        public float AttackRadius => _attackRadius;
-        [SerializeField] private int _damage;
-        public int Damage => _damage;
-        [SerializeField] private float _attackInterval = 1f;
-        public float AttackInterval => _attackInterval;
-        [SerializeField, Range(0f, 1f)] private float _accuracy = .5f;
-        public float Accuracy => _accuracy;
+        //[Header("Attack Properties")]
+        //[SerializeField] private float _attackRadius = 1f;
+        //public float AttackRadius => _attackRadius;
+        //[SerializeField] private int _damage;
+        //public int Damage => _damage;
+        //[SerializeField] private float _attackInterval = 1f;
+        //public float AttackInterval => _attackInterval;
+        //[SerializeField, Range(0f, 1f)] private float _accuracy = .5f;
+        //public float Accuracy => _accuracy;
 
         private List<UnitHealth> _targets = new List<UnitHealth>();
         public IList<UnitHealth> Targets => _targets.AsReadOnly();
+        public UnitHealth Target;
+        public AttackType CurrentAttackType { get; private set; }
+
+        public AttackAttributes CurrentAttack
+        {
+            get
+            {
+                if (CurrentAttackType == AttackType.Range)
+                    return _config.Combat.Range;
+                else
+                    return _config.Combat.Melee;
+            }
+        }
+
+        public RangeAttackAttrubtes RangeAttack => _config.Combat.Range;
+        public MeleeAttackAttrubutes MeleeAttack => _config.Combat.Melee;
 
         protected new CharacterStateFactory States { get; private set; }
 
+        public Action<CharacterStateMachine, AttackType> OnAttackTypeSwitched { get; set; }
         public Action<CharacterStateMachine> OnFindTarget { get; set; }
         public Action<CharacterStateMachine> OnLostAllTargets { get; set; }
         public Action<CharacterStateMachine> OnDead { get; set; }
@@ -55,7 +73,23 @@ namespace States.Characters
         protected override void Start()
         {
             base.Start();
-            _agroTrigger.radius = _agroRadius;
+
+            _agroTrigger.radius = _config.Combat.AgroRadius;
+            _aiPath.maxSpeed = _config.Movement.MoveSpeed;
+            _aiPath.rotationSpeed = _config.Movement.RotationSpeed;
+
+            _health.Init(_config.Health);
+
+            switch (_config.Combat.AttackType)
+            {
+                case AttackType.Both:
+                case AttackType.Range:
+                    SwitchAttackType(AttackType.Range);
+                    break;
+                case AttackType.Melee:
+                    SwitchAttackType(AttackType.Melee);
+                    break;
+            }
         }
 
         protected override void OnDestroy()
@@ -120,7 +154,6 @@ namespace States.Characters
 
             target.OnDead += RemoveTargetFromList;
             _targets.Add(target);
-            _targetsCount++;
 
             if (_targets.Count == 1)
                 OnFindTarget?.Invoke(this);
@@ -132,7 +165,6 @@ namespace States.Characters
             {
                 target.OnDead -= RemoveTargetFromList;
                 _targets.Remove(target);
-                _targetsCount--;
 
                 if (_targets.Count <= 0)
                     OnLostAllTargets?.Invoke(this);
@@ -171,6 +203,16 @@ namespace States.Characters
             }
 
             return closestTarget;
+        }
+
+        public void SwitchAttackType(AttackType newAttackType, bool callback = true)
+        {
+            if (newAttackType == CurrentAttackType) return;
+
+            CurrentAttackType = newAttackType;
+
+            if(callback == true)
+                OnAttackTypeSwitched?.Invoke(this, CurrentAttackType);
         }
 
         public class Factory : PrefabFactory<CharacterStateMachine> { }

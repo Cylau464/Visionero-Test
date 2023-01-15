@@ -147,23 +147,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88f2ed125d689a546ac09471026e4331, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _targetsCount: 0
-  _agent: {fileID: 4647503807117793660}
+  _config: {fileID: 11400000, guid: 486c4ff564d2e3d458177e1aa570ec92, type: 2}
   _aiPath: {fileID: 2950361540848027416}
   _health: {fileID: 5662986366337956025}
   _animationController: {fileID: 7124155117025261175}
   _collider: {fileID: 179045765359246590}
   _agroTrigger: {fileID: 3732196750806519866}
-  _agroRadius: 20
   _targetMask:
     serializedVersion: 2
     m_Bits: 8
-  _ignoreTargetsWhenMove: 0
-  _stopIgnoringDestinationDistance: 2
-  _attackRadius: 15
-  _damage: 1
-  _attackInterval: 1
-  _accuracy: 0.25
+  Target: {fileID: 5662986366337956025}
 --- !u!195 &4647503807117793660
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -198,7 +191,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7182718cc9f4d66438712bdf4026740b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 1
   _extraRangeForAttack: 0
 --- !u!54 &2250282913179962665
 Rigidbody:

@@ -3,29 +3,28 @@ using UnityEngine;
 
 public class UnitHealth : MonoBehaviour
 {
-    [SerializeField] private int _maxHealth;
-    [SerializeField] private float _extraRangeForAttack;
+    [SerializeField, Tooltip("For melee attacks")] private float _extraRangeForAttack;
 
     public float ExtraRangeForAttack => _extraRangeForAttack;
-    public int MaxHealth => _maxHealth;
     public int Health { get; private set; }
     public bool IsDead { get; private set; }
     public bool IsTargeted => _targetedUnits > 0;
     private int _targetedUnits;
+    private int _maxHealth;
 
     public Action<int> OnTakeDamage { get; set; }
     public Action<UnitHealth> OnDead { get; set; }
 
-    private void Start()
+    public void Init(int maxHealth)
     {
-        Health = _maxHealth;
+        Health = _maxHealth = maxHealth;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeHit()
     {
-        if (Health <= 0 || damage <= 0) return;
+        if (Health <= 0) return;
 
-        Health = Mathf.Max(0, Health - damage);
+        Health = Mathf.Max(0, Health - 1);
         OnTakeDamage?.Invoke(Health);
 
         if (Health <= 0)
@@ -39,7 +38,6 @@ public class UnitHealth : MonoBehaviour
     {
         _targetedUnits++;
     }
-
 
     public void RemoveTargetedUnit()
     {

@@ -10,14 +10,14 @@
         {
         }
 
-        public override void CheckSwitchStates()
-        {
-            if (Machine.Targets.Count > 0)
-            {
-                if (Machine.IgnoreTargetsWhenMove == true
-                    && Machine.AIPath.remainingDistance /*Machine.Agent.remainingDistance */<= Machine.StopIgnoringDestinationDistance)
-                    SwitchState(Factory.Battle());
-            }
-        }
+        //public override void CheckSwitchStates()
+        //{
+        //    if (Machine.Targets.Count > 0)
+        //    {
+        //        //if (Machine.IgnoreTargetsWhenMove == true
+        //        //    && Machine.AIPath.remainingDistance /*Machine.Agent.remainingDistance */<= Machine.StopIgnoringDestinationDistance)
+        //            SwitchState(Factory.Battle());
+        //    }
+        //}
     }
 }

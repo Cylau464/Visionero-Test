@@ -1514,7 +1514,12 @@ PrefabInstance:
     - target: {fileID: 3399773533228754229, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
         type: 3}
       propertyPath: _unitsCount
-      value: 3
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399773533228754229, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
+        type: 3}
+      propertyPath: _minDistanceBtwUnits
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5304927476652504768, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
         type: 3}
@@ -1524,7 +1529,7 @@ PrefabInstance:
     - target: {fileID: 5304927476652504768, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5304927476652504770, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
         type: 3}
@@ -1579,16 +1584,6 @@ PrefabInstance:
     - target: {fileID: 5304927476652504770, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9197848328923706605, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9197848328923706605, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
-        type: 3}
-      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -4735,33 +4730,15 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1614692020, guid: fd90b908c37fbfb4f9ee5343a6f659bf, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1614692020, guid: fd90b908c37fbfb4f9ee5343a6f659bf, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3907911973639044248, guid: fd90b908c37fbfb4f9ee5343a6f659bf,
         type: 3}
       propertyPath: _unitsCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3907911973639044248, guid: fd90b908c37fbfb4f9ee5343a6f659bf,
-        type: 3}
-      propertyPath: _minDistanceBtwUnits
-      value: 1
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3907911973639044249, guid: fd90b908c37fbfb4f9ee5343a6f659bf,
         type: 3}
       propertyPath: m_Name
       value: Controlled Units Group
-      objectReference: {fileID: 0}
-    - target: {fileID: 3907911973639044249, guid: fd90b908c37fbfb4f9ee5343a6f659bf,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3907911973639044251, guid: fd90b908c37fbfb4f9ee5343a6f659bf,
         type: 3}
@@ -4816,11 +4793,6 @@ PrefabInstance:
     - target: {fileID: 3907911973639044251, guid: fd90b908c37fbfb4f9ee5343a6f659bf,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8603707713462696424, guid: fd90b908c37fbfb4f9ee5343a6f659bf,
-        type: 3}
-      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

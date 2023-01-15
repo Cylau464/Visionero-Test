@@ -6,11 +6,11 @@
         {
         }
 
-        public override void CheckSwitchStates()
-        {
-            if (Machine.IgnoreTargetsWhenMove == true
-                && Machine.AIPath.remainingDistance /*Machine.Agent.remainingDistance*/ > Machine.StopIgnoringDestinationDistance)
-                SwitchState(Factory.Neutral());
-        }
+        //public override void CheckSwitchStates()
+        //{
+        //    //if (Machine.IgnoreTargetsWhenMove == true
+        //    //    && Machine.AIPath.remainingDistance /*Machine.Agent.remainingDistance*/ > Machine.StopIgnoringDestinationDistance)
+        //        //SwitchState(Factory.Neutral());
+        //}
     }
 }

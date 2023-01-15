@@ -34,7 +34,7 @@
             int totalHealth = 0;
 
             foreach (UnitHealth unitHealth in _unitsHealth)
-                totalHealth += unitHealth.MaxHealth;
+                totalHealth += 1;// unitHealth.MaxHealth;
 
             return totalHealth;
         }

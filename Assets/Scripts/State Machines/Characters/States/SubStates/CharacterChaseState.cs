@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Units.Attributes;
+using UnityEngine;
 
 namespace States.Characters
 {
@@ -6,7 +7,6 @@ namespace States.Characters
     {
         private float _checkClosestTargetInterval = 1f;
         private float _curCheckDelay;
-        private UnitHealth _target;
 
         public CharacterChaseState(CharacterStateMachine machine, CharacterStateFactory factory) : base(machine, factory)
         {
@@ -14,27 +14,33 @@ namespace States.Characters
 
         public override void CheckSwitchStates()
         {
-            if (_target == null) return;
+            // Учитывать дальность отхождения от позиции перед преследованием
+            // 
 
-            float distanceToTarget = Vector3.Distance(Machine.transform.position, _target.transform.position) - _target.ExtraRangeForAttack;
+            if (Machine.Target == null) return;
 
-            if (distanceToTarget <= Machine.AttackRadius)
+            float distanceToTarget = Vector3.Distance(Machine.transform.position, Machine.Target.transform.position) - Machine.Target.ExtraRangeForAttack;
+            
+            if (distanceToTarget <= Machine.CurrentAttack.Distance)
             {
                 Machine.AIPath.destination = Machine.transform.position;
                 //Machine.Agent.SetDestination(Machine.transform.position);
-                SwitchState(Factory.Attack(_target));
+                SwitchState(Factory.Attack(Machine.Target));
             }
         }
 
         public override void Enter()
         {
-            _target = GetTarget();
+            Machine.Target = GetTarget();
+            Machine.OnAttackTypeSwitched += OnAttackTypeSwitched;
         }
 
         public override void Exit()
         {
-            if (_target != null)
-                _target.RemoveTargetedUnit();
+            if (Machine.Target != null)
+                Machine.Target.RemoveTargetedUnit();
+
+            Machine.OnAttackTypeSwitched -= OnAttackTypeSwitched;
         }
 
         public override void InitializeSubState()
@@ -45,14 +51,7 @@ namespace States.Characters
         public override void Update()
         {
             if (_curCheckDelay <= Time.time)
-            {
-                _target = GetTarget();
-
-                if (_target == null) return;
-
-                Machine.AIPath.destination = _target.transform.position;
-                //Machine.Agent.SetDestination(_target.transform.position);
-            }
+                UpdateTarget();
 
             Machine.AnimationController.SetMoveSpeed(Machine.AIPath/*Agent*/.velocity.magnitude);
             CheckSwitchStates();
@@ -63,10 +62,24 @@ namespace States.Characters
             UnitHealth target = Machine.GetClosestTarget();
             _curCheckDelay = Time.time + _checkClosestTargetInterval;
 
-            if (target != null)
+            if (target != null && target != Machine.Target)
                 target.AddTargetedUnit();
 
             return target;
+        }
+
+        private void UpdateTarget()
+        {
+            Machine.Target = GetTarget();
+
+            if (Machine.Target == null) return;
+
+            Machine.AIPath.destination = Machine.Target.transform.position;
+        }
+
+        private void OnAttackTypeSwitched(CharacterStateMachine machine, AttackType attackType)
+        {
+            UpdateTarget();
         }
     }
 }

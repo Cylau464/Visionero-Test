@@ -29,7 +29,7 @@ namespace Units
 
         protected override int GetTotalMaxHealth()
         {
-            return _unitHealth.MaxHealth;
+            return 1;// _unitHealth.MaxHealth;
         }
     }
 }

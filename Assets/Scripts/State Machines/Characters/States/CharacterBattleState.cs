@@ -1,4 +1,7 @@
-﻿namespace States.Characters
+﻿using Units.Attributes;
+using UnityEngine;
+
+namespace States.Characters
 {
     public class CharacterBattleState : CharacterState
     {
@@ -10,7 +13,14 @@
 
         public override void CheckSwitchStates()
         {
+            // Добавить логику перехода из ближней атаки в дальнюю при унчитожении всех ближайщих юнитов
+            if (Machine.CurrentAttackType == AttackType.Range)
+            {
+                float distanceToTarget = Vector3.Distance(Machine.transform.position, Machine.Target.transform.position);
 
+                if (distanceToTarget <= Machine.RangeAttack.MinDistance)
+                    Machine.SwitchAttackType(AttackType.Melee);
+            }
         }
 
         public override void Enter()

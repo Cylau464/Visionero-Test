@@ -33,7 +33,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4583647734548845603}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.26, y: 0, z: 18.04}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -55,23 +55,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9cb0694f9a22f24fbc3dc26b787752b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _targetsCount: 0
-  _agent: {fileID: 2523557530573285161}
+  _config: {fileID: 11400000, guid: 486c4ff564d2e3d458177e1aa570ec92, type: 2}
   _aiPath: {fileID: 5530897446054288198}
   _health: {fileID: 3309233381696931564}
   _animationController: {fileID: 7705889706029122988}
   _collider: {fileID: 560562971855743838}
   _agroTrigger: {fileID: 5814524291490623087}
-  _agroRadius: 15
   _targetMask:
     serializedVersion: 2
     m_Bits: 64
-  _ignoreTargetsWhenMove: 0
-  _stopIgnoringDestinationDistance: 3
-  _attackRadius: 15
-  _damage: 1
-  _attackInterval: 1
-  _accuracy: 0.25
+  Target: {fileID: 3309233381696931564}
   _selectedIndicator: {fileID: 175665978715959830}
 --- !u!195 &2523557530573285161
 NavMeshAgent:
@@ -107,7 +100,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7182718cc9f4d66438712bdf4026740b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 1
   _extraRangeForAttack: 0
 --- !u!54 &8953338861537473404
 Rigidbody:
@@ -225,14 +217,14 @@ MonoBehaviour:
   enableRotation: 1
   autoRepath:
     mode: 2
-    interval: 0.5
+    interval: 0.1
     sensitivity: 10
     maximumInterval: 2
     visualizeSensitivity: 0
   targetCompatibility: {fileID: 0}
   maxAcceleration: -2.5
   rotationSpeed: 480
-  slowdownDistance: 0.6
+  slowdownDistance: 1
   pickNextWaypointDist: 2
   endReachedDistance: 0.2
   alwaysDrawGizmos: 0

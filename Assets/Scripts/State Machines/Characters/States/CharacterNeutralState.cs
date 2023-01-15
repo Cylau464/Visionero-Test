@@ -1,7 +1,11 @@
-﻿namespace States.Characters
+﻿using System;
+
+namespace States.Characters
 {
     public class CharacterNeutralState : CharacterState
     {
+        private bool _hasTarget;
+
         public CharacterNeutralState(CharacterStateMachine machine, CharacterStateFactory factory) : base(machine, factory)
         {
             IsRootState = true;
@@ -10,20 +14,22 @@
 
         public override void CheckSwitchStates()
         {
-
+            if(_hasTarget == true && Machine.AIPath.reachedDestination == true)
+                SwitchState(Factory.Battle());
         }
 
         public override void Enter()
         {
             Machine.Health.OnDead += Dead;
             Machine.OnFindTarget += OnFindTarget;
-
+            Machine.OnLostAllTargets += OnLostTarget;
         }
 
         public override void Exit()
         {
             Machine.Health.OnDead -= Dead;
             Machine.OnFindTarget -= OnFindTarget;
+            Machine.OnLostAllTargets -= OnLostTarget;
         }
 
         public override void InitializeSubState()
@@ -41,11 +47,18 @@
 
         private void OnFindTarget(CharacterStateMachine machine)
         {
-            if (Machine.IgnoreTargetsWhenMove == true
-                && Machine.AIPath.remainingDistance /*Machine.Agent.remainingDistance */> Machine.StopIgnoringDestinationDistance)
-                return;
+            _hasTarget = true;
 
-            SwitchState(Factory.Battle());
+            //if (Machine.IgnoreTargetsWhenMove == true
+            //    && Machine.AIPath.remainingDistance /*Machine.Agent.remainingDistance */> Machine.StopIgnoringDestinationDistance)
+            //    return;
+
+            //SwitchState(Factory.Battle());
+        }
+
+        private void OnLostTarget(CharacterStateMachine machine)
+        {
+            _hasTarget = false;
         }
     }
 }
