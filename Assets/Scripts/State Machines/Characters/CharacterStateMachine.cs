@@ -7,6 +7,7 @@ using Animations;
 using Units;
 using Pathfinding;
 using Units.Attributes;
+using System.Collections;
 
 namespace States.Characters
 {
@@ -43,28 +44,32 @@ namespace States.Characters
         //public float AttackInterval => _attackInterval;
         //[SerializeField, Range(0f, 1f)] private float _accuracy = .5f;
         //public float Accuracy => _accuracy;
+        private Coroutine _chargingAttackCor;
 
         private List<UnitHealth> _targets = new List<UnitHealth>();
         public IList<UnitHealth> Targets => _targets.AsReadOnly();
         public UnitHealth Target;
         public AttackType CurrentAttackType { get; private set; }
+        public bool AttackCharged { get; private set; }
 
         public AttackAttributes CurrentAttack
         {
             get
             {
                 if (CurrentAttackType == AttackType.Range)
-                    return _config.Combat.Range;
+                    return Combat.Range;
                 else
-                    return _config.Combat.Melee;
+                    return Combat.Melee;
             }
         }
 
-        public RangeAttackAttrubtes RangeAttack => _config.Combat.Range;
-        public MeleeAttackAttrubutes MeleeAttack => _config.Combat.Melee;
+        public UnitCombatAttributes Combat => _config.Combat;
+
+        public Vector3 HeldedPosition { get; private set; }
 
         protected new CharacterStateFactory States { get; private set; }
 
+        public Action OnHeldedPositionSetted { get; set; }
         public Action<CharacterStateMachine, AttackType> OnAttackTypeSwitched { get; set; }
         public Action<CharacterStateMachine> OnFindTarget { get; set; }
         public Action<CharacterStateMachine> OnLostAllTargets { get; set; }
@@ -74,7 +79,6 @@ namespace States.Characters
         {
             base.Start();
 
-            _agroTrigger.radius = _config.Combat.AgroRadius;
             _aiPath.maxSpeed = _config.Movement.MoveSpeed;
             _aiPath.rotationSpeed = _config.Movement.RotationSpeed;
 
@@ -205,14 +209,53 @@ namespace States.Characters
             return closestTarget;
         }
 
+        public void SetDestionation(Vector3 destination, bool heldedPosition = false)
+        {
+            _aiPath.destination = destination;
+
+            if (heldedPosition == true)
+            {
+                HeldedPosition = destination;
+                OnHeldedPositionSetted?.Invoke();
+            }
+        }
+
         public void SwitchAttackType(AttackType newAttackType, bool callback = true)
         {
             if (newAttackType == CurrentAttackType) return;
 
+            ResetAttackPoint();
             CurrentAttackType = newAttackType;
+            _agroTrigger.radius = CurrentAttack.AgroRadius;
 
-            if(callback == true)
+            if (callback == true)
                 OnAttackTypeSwitched?.Invoke(this, CurrentAttackType);
+        }
+
+        public void ChargeAttackPoint(float time)
+        {
+            if (_chargingAttackCor != null || AttackCharged == true) return;
+
+            _chargingAttackCor = StartCoroutine(ChargingAttackPoint(time));
+        }
+
+        private IEnumerator ChargingAttackPoint(float time)
+        {
+            yield return new WaitForSeconds(time);
+
+            AttackCharged = true;
+            _chargingAttackCor = null;
+        }
+
+        public void ResetAttackPoint()
+        {
+            if (_chargingAttackCor != null)
+            {
+                StopCoroutine(_chargingAttackCor);
+                _chargingAttackCor = null;
+            }
+
+            AttackCharged = false;
         }
 
         public class Factory : PrefabFactory<CharacterStateMachine> { }

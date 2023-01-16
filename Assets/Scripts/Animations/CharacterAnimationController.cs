@@ -11,6 +11,7 @@ namespace Animations
 
         private int _moveSpeedParamID;
         private int _inBattleParamID;
+        private int _aimParamID;
         private int _attackParamID;
         private int _attackAnimIndexParamID;
         private int _deadParamID;
@@ -22,6 +23,7 @@ namespace Animations
         {
             _moveSpeedParamID = Animator.StringToHash("move_speed");
             _inBattleParamID = Animator.StringToHash("in_battle");
+            _aimParamID = Animator.StringToHash("aim");
             _attackParamID = Animator.StringToHash("attack");
             _attackAnimIndexParamID = Animator.StringToHash("attack_anim_index");
             _deadParamID = Animator.StringToHash("dead");
@@ -35,6 +37,11 @@ namespace Animations
         public void SetBattle(bool inBattle)
         {
             _animator.SetBool(_inBattleParamID, inBattle);
+        }
+
+        public void Aim()
+        {
+            _animator.SetTrigger(_aimParamID);
         }
 
         public void Attack()

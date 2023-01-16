@@ -16,7 +16,6 @@ namespace Units.Attributes
         [field: SerializeField] public AttackType AttackType { get; private set; }
         [field: SerializeField, Tooltip("Max distance from the position to chase a target")] public float MaxDistanceFromPosition { get; private set; }
 
-        [field: SerializeField] public float AgroRadius { get; private set; }
         [field: SerializeField, AllowNesting, ShowIf(EConditionOperator.Or, nameof(AttackType), AttackType.Melee, AttackType.Both)]
         public MeleeAttackAttrubutes Melee { get; private set; }
         [field: SerializeField, AllowNesting, ShowIf(EConditionOperator.Or, nameof(AttackType), AttackType.Range, AttackType.Both)]

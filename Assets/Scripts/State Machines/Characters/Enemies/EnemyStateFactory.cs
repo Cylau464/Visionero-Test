@@ -38,9 +38,9 @@ namespace States.Characters.Enemy
             return StateFactory.Create<EnemyChaseState>(Machine, this);
         }
 
-        public override State Attack(UnitHealth target)
+        public override State Attack()
         {
-            return StateFactory.Create<EnemyAttackState>(Machine, this, target);
+            return StateFactory.Create<EnemyAttackState>(Machine, this);
         }
 
         public State Arrival()

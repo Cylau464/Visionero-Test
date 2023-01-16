@@ -13,14 +13,14 @@ namespace States.Characters.Enemy
 
         public override void Enter()
         {
-            Machine.OnArrived += Arrived;
+            //Machine.OnArrived += Arrived;
             //Machine.Agent.enabled = false;
             Machine.AIPath.enabled = false;
         }
 
         public override void Exit()
         {
-            Machine.OnArrived -= Arrived;
+            //Machine.OnArrived -= Arrived;
             //Machine.Agent.enabled = true;
             Machine.AIPath.enabled = true;
             //Machine.Agent.obstacleAvoidanceType = UnityEngine.AI.ObstacleAvoidanceType.LowQualityObstacleAvoidance;

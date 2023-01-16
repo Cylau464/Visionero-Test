@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using Units.Attributes;
 
 namespace States.Characters
 {
@@ -23,6 +25,11 @@ namespace States.Characters
             Machine.Health.OnDead += Dead;
             Machine.OnFindTarget += OnFindTarget;
             Machine.OnLostAllTargets += OnLostTarget;
+
+            if (Machine.Combat.AttackType == AttackType.Melee)
+                Machine.ChargeAttackPoint(Machine.Combat.Melee.PrepareTime);
+
+            Machine.SetDestionation(Machine.HeldedPosition);
         }
 
         public override void Exit()

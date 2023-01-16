@@ -9,6 +9,7 @@ namespace Units.Attributes
     {
         [field: SerializeField] public float PrepareTime { get; private set; }
         [field: SerializeField, Tooltip("Distance of attack")] public float Distance { get; private set; }
+        [field: SerializeField] public float AgroRadius { get; private set; }
     }
 
     [System.Serializable]

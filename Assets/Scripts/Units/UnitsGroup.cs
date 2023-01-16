@@ -70,6 +70,7 @@ namespace Units
                 unitsHealth[i] = InitUnit(unit, positions[i], i);
             }
 
+            SetDestinations(positions.ToList());
             _healthIndicator.Init(unitsHealth);
         }
 
@@ -174,7 +175,7 @@ namespace Units
                         }
                     }
 
-                    units[unitIndex].AIPath.destination = destinations[i];
+                    units[unitIndex].SetDestionation(destinations[i], true);
                     units.RemoveAt(unitIndex);
                     curDistance = float.MaxValue;
                     unitIndex = 0;
@@ -182,11 +183,11 @@ namespace Units
             }
             else
             {
-                units[0].AIPath.destination = centerPosition;
+                units[0].SetDestionation(centerPosition, true);
             }
 
             _centerOfGroup.destination = centerPosition;
-            Debug.LogWarning("Time spent accumulating units: " + (Time.realtimeSinceStartup - time));
+            //Debug.LogWarning("Time spent accumulating units: " + (Time.realtimeSinceStartup - time));
         }
 
         /// <summary>
@@ -242,7 +243,7 @@ namespace Units
                 if (changed == false) break;
             }
 
-            Debug.Log(iterations + " iterations by time: " + (Time.realtimeSinceStartup - time));
+            //Debug.Log(iterations + " iterations by time: " + (Time.realtimeSinceStartup - time));
 
             _positions = positions.ToArray();
             _radius = _unitPrefab.AIPath/*Agent*/.radius;
@@ -294,6 +295,12 @@ namespace Units
             center /= _units.Count;
 
             return center;
+        }
+
+        protected virtual void OnSetDestination(Vector3 destination)
+        {
+            Vector3[] destinations = GetUnitsPositions(destination, _units.Count);
+            SetDestinations(destinations.ToList());
         }
     }
 }

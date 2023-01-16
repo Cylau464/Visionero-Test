@@ -85,8 +85,6 @@ MonoBehaviour:
   _minDistanceBtwUnits: 0.5
   _healthIndicator: {fileID: 7630557253901723399}
   _centerOfGroup: {fileID: 5225790828259232729}
-  _boatPrefab: {fileID: 3948627861404063867, guid: 79f5f45b1cdcaab438d3074346790836,
-    type: 3}
 --- !u!1 &8428346991069796077
 GameObject:
   m_ObjectHideFlags: 0
@@ -167,7 +165,7 @@ MonoBehaviour:
   radius: 0.01
   height: 2
   canMove: 1
-  maxSpeed: 10
+  maxSpeed: 5
   gravity: {x: NaN, y: NaN, z: NaN}
   groundMask:
     serializedVersion: 2

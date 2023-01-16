@@ -7,18 +7,17 @@ namespace States.Characters
     {
         private float _attackDelay;
         private bool _canAttack = true;
-        private UnitHealth _target;
+        private AttackType _currentAttackType;
 
-        public CharacterAttackState(CharacterStateMachine machine, CharacterStateFactory factory, UnitHealth target) : base(machine, factory)
+        public CharacterAttackState(CharacterStateMachine machine, CharacterStateFactory factory) : base(machine, factory)
         {
-            _target = target;
         }
 
         public override void CheckSwitchStates()
         {
-            if (_target == null) return;
+            if (Machine.Target == null) return;
 
-            float distanceToTarget = Vector3.Distance(Machine.transform.position, _target.transform.position) - _target.ExtraRangeForAttack;
+            float distanceToTarget = Vector3.Distance(Machine.transform.position, Machine.Target.transform.position) - Machine.Target.ExtraRangeForAttack;
             
             if (_canAttack == true && distanceToTarget > Machine.CurrentAttack.Distance)
                 SwitchState(Factory.Chase());
@@ -26,21 +25,19 @@ namespace States.Characters
 
         public override void Enter()
         {
-            _target.OnDead += OnTargetDead;
+            Machine.Target.OnDead += OnTargetDead;
 
             Machine.AnimationController.OnGiveDamage += GiveDamage;
             Machine.AnimationController.OnAttackEnd += AttackEnd;
             Machine.AnimationController.SetMoveSpeed(0f);
-            _attackDelay = Time.time + Machine.CurrentAttack.PrepareTime;
-
         }
 
         public override void Exit()
         {
-            if (_target != null)
+            if (Machine.Target != null)
             {
-                _target.RemoveTargetedUnit();
-                _target.OnDead -= OnTargetDead;
+                Machine.Target.RemoveTargetedUnit();
+                Machine.Target.OnDead -= OnTargetDead;
             }
 
             Machine.AnimationController.OnGiveDamage -= GiveDamage;
@@ -56,44 +53,84 @@ namespace States.Characters
         {
             CheckSwitchStates();
 
-            if (_attackDelay <= Time.time && _canAttack == true)
+            // Почему-то атака не работает у противников
+            if (_canAttack == true)
             {
-                _target = GetTarget();
+                if (Machine.CurrentAttackType == AttackType.Range)
+                {
+                    float distanceToTarget = Vector3.Distance(Machine.transform.position, Machine.Target.transform.position);
 
-                if (_target == null) return;
+                    if (distanceToTarget <= Machine.Combat.Range.MinDistance)
+                        Machine.SwitchAttackType(AttackType.Melee);
+                }
 
-                Attack();
+                if (Machine.AttackCharged == true)
+                {
+                    if (Machine.Target == null || Machine.Target.IsDead == true)
+                        Machine.Target = GetTarget();
+
+                    if (Machine.Target == null) return;
+
+                    if (_attackDelay > 0f)
+                    {
+                        if (_attackDelay <= Time.time)
+                            Attack();
+                    }
+                    else
+                    {
+                        StartAttack();
+                    }
+                }
             }
 
-            if (_target != null)
+            if (Machine.Target != null)
             {
-                Vector3 direction = (_target.transform.position - Machine.transform.position).normalized;
+                Vector3 direction = (Machine.Target.transform.position - Machine.transform.position).normalized;
                 direction.y = 0f;
                 Machine.transform.rotation = Quaternion.LookRotation(direction);
             }
         }
 
+        private void StartAttack()
+        {
+            _currentAttackType = Machine.CurrentAttackType;
+
+            if (_currentAttackType == AttackType.Melee)
+                Attack();
+            else
+                Aim();
+        }
+
+        private void Aim()
+        {
+            Machine.AnimationController.Aim();
+            _attackDelay = Time.time + Machine.Combat.Range.AimTime;
+        }
+
         private void Attack()
         {
-            _attackDelay = Time.time + Machine.CurrentAttack.PrepareTime;
             Machine.AnimationController.Attack();
+            Machine.ResetAttackPoint();
+            _attackDelay = 0f;
             _canAttack = false;
         }
 
         private void GiveDamage()
         {
-            if (_target != null)
+            if (Machine.Target != null)
             {
-                if (Machine.CurrentAttackType == AttackType.Range)
+                if (_currentAttackType == AttackType.Range)
                 {
-                    if(Machine.RangeAttack.Accuracy >= Random.value * 100)
-                        _target.TakeHit();
+                    if(Machine.Combat.Range.Accuracy >= Random.value * 100)
+                        Machine.Target.TakeHit();
                 }
                 else
                 {
-                    _target.TakeHit();
+                    Machine.Target.TakeHit();
                 }
             }
+
+            Machine.ChargeAttackPoint(Machine.CurrentAttack.PrepareTime);
         }
 
         private void AttackEnd()
@@ -103,18 +140,18 @@ namespace States.Characters
 
         private void OnTargetDead(UnitHealth target)
         {
-            _target.OnDead -= OnTargetDead;
-            _target = GetTarget();
+            Machine.Target.OnDead -= OnTargetDead;
+            Machine.Target = GetTarget();
 
-            if(_target != null)
-                _target.OnDead += OnTargetDead;
+            if(Machine.Target != null)
+                Machine.Target.OnDead += OnTargetDead;
         }
 
         protected virtual UnitHealth GetTarget()
         {
             UnitHealth target = Machine.GetClosestTarget();
 
-            if (target != null && target != _target)
+            if (target != null && target != Machine.Target)
                 target.AddTargetedUnit();
 
             return target;

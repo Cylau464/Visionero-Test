@@ -9,6 +9,7 @@ namespace States.Characters.Enemy
 
         public EnemyChaseState(EnemyStateMachine machine, EnemyStateFactory factory) : base(machine, factory)
         {
+
         }
 
         protected override UnitHealth GetTarget()

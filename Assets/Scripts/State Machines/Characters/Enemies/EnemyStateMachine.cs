@@ -7,11 +7,11 @@ namespace States.Characters.Enemy
     {
         [Inject] private UnitHealth[] _buildingsTargets;
         public UnitHealth[] BuildngsTargets => _buildingsTargets;
-        public bool IsArrived { get; private set; }
+        //public bool IsArrived { get; private set; }
 
         protected new EnemyStateFactory States;
 
-        public Action OnArrived { get; set; }
+        //public Action OnArrived { get; set; }
 
         protected override void InitializeState()
         {
@@ -20,10 +20,10 @@ namespace States.Characters.Enemy
             CurrentState.Enter();
         }
 
-        public void Arrived()
-        {
-            IsArrived = true;
-            OnArrived?.Invoke();
-        }
+        //public void Arrived()
+        //{
+        //    IsArrived = true;
+        //    OnArrived?.Invoke();
+        //}
     }
 }

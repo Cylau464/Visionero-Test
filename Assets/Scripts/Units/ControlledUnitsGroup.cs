@@ -45,10 +45,9 @@ namespace Units
             //_selectedIndicator.Disable();
         }
 
-        private void OnSetDestination(Vector3 destination)
+        protected override void OnSetDestination(Vector3 destination)
         {
-            Vector3[] destinations = GetUnitsPositions(destination, _units.Count);
-            SetDestinations(destinations.ToList());
+            base.OnSetDestination(destination);
             Unselect();
         }
 

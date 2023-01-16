@@ -1,4 +1,6 @@
-﻿namespace States.Characters.Enemy
+﻿using UnityEngine;
+
+namespace States.Characters.Enemy
 {
     public class EnemyNeutralState : CharacterNeutralState
     {
@@ -9,16 +11,16 @@
         {
         }
 
-        public override void InitializeSubState()
-        {
-            SetSubState(Factory.Arrival());
-        }
+        //public override void InitializeSubState()
+        //{
+        //    SetSubState(Factory.Arrival());
+        //}
 
-        public override void CheckSwitchStates()
-        {
-            if (Machine.IsArrived == true
-                && (Machine.Targets.Count > 0 || Machine.BuildngsTargets.Length > 0))
-                SwitchState(Factory.Battle());
-        }
+        //public override void CheckSwitchStates()
+        //{
+        //    //Machine.IsArrived == true
+        //    if (Machine.Targets.Count > 0 || Machine.BuildngsTargets.Length > 0)
+        //        SwitchState(Factory.Battle());
+        //}
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace States.Characters
+﻿using Units.Attributes;
+
+namespace States.Characters
 {
     public class CharacterMoveState : CharacterState
     {
@@ -12,7 +14,8 @@
 
         public override void Enter()
         {
-
+            if (Machine.Combat.AttackType != AttackType.Melee)
+                Machine.ResetAttackPoint();
         }
 
         public override void Exit()

@@ -14,24 +14,29 @@ namespace States.Characters
 
         public override void CheckSwitchStates()
         {
-            // Учитывать дальность отхождения от позиции перед преследованием
-            // 
-
             if (Machine.Target == null) return;
+
+            float distanceFromPosition = Vector3.Distance(Machine.transform.position, Machine.HeldedPosition);
+
+            if (distanceFromPosition >= Machine.Combat.MaxDistanceFromPosition)
+            {
+                Machine.SetDestionation(Machine.HeldedPosition);
+                return;
+            }
 
             float distanceToTarget = Vector3.Distance(Machine.transform.position, Machine.Target.transform.position) - Machine.Target.ExtraRangeForAttack;
             
             if (distanceToTarget <= Machine.CurrentAttack.Distance)
             {
-                Machine.AIPath.destination = Machine.transform.position;
+                Machine.SetDestionation(Machine.transform.position);
                 //Machine.Agent.SetDestination(Machine.transform.position);
-                SwitchState(Factory.Attack(Machine.Target));
+                SwitchState(Factory.Attack());
             }
         }
 
         public override void Enter()
         {
-            Machine.Target = GetTarget();
+            UpdateTarget();
             Machine.OnAttackTypeSwitched += OnAttackTypeSwitched;
         }
 
@@ -74,7 +79,7 @@ namespace States.Characters
 
             if (Machine.Target == null) return;
 
-            Machine.AIPath.destination = Machine.Target.transform.position;
+            Machine.SetDestionation(Machine.Target.transform.position);
         }
 
         private void OnAttackTypeSwitched(CharacterStateMachine machine, AttackType attackType)

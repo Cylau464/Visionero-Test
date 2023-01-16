@@ -36,9 +36,9 @@
             return StateFactory.Create<CharacterChaseState>(Machine, this);
         }
 
-        public virtual State Attack(UnitHealth target)
+        public virtual State Attack()
         {
-            return StateFactory.Create<CharacterAttackState>(Machine, this, target);
+            return StateFactory.Create<CharacterAttackState>(Machine, this);
         }
     }
 }
