@@ -65,6 +65,10 @@ namespace Units
                     }
                 }
             }
+            else if (_selected != null)
+            {
+                _selected.Unselect();
+            }
 
             return false;
         }

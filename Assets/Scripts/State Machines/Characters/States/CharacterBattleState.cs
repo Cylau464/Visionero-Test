@@ -25,9 +25,6 @@ namespace States.Characters
 
             Machine.AnimationController.SetBattle(true);
 
-            if (Machine.Combat.AttackType != AttackType.Melee)
-                Machine.ChargeAttackPoint(Machine.CurrentAttack.PrepareTime);
-
             if (Machine.CurrentAttackType == AttackType.Range)
             {
                 float distanceToTarget = Vector3.Distance(Machine.transform.position, Machine.Target.transform.position);
@@ -35,6 +32,8 @@ namespace States.Characters
                 if (distanceToTarget <= Machine.Combat.Range.MinDistance)
                     Machine.SwitchAttackType(AttackType.Melee);
             }
+
+            Machine.ChargeAttackPoint(Machine.CurrentAttackType, Machine.CurrentAttack.PrepareTime);
         }
 
         public override void Exit()
@@ -45,6 +44,9 @@ namespace States.Characters
             Machine.OnHeldedPositionSetted -= StopBattle;
 
             Machine.AnimationController.SetBattle(false);
+
+            if (Machine.Target != null)
+                Machine.Target.RemoveTargetedUnit();
         }
 
         public override void InitializeSubState()

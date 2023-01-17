@@ -53,7 +53,7 @@ namespace States
         public void EnterStates()
         {
             Enter();
-            
+
             if (_currentSubState != null)
                 _currentSubState.EnterStates();
         }
@@ -63,7 +63,10 @@ namespace States
             Exit();
 
             if (_currentSubState != null)
+            {
                 _currentSubState.ExitStates();
+                _currentSubState = null;
+            }
         }
 
         protected void SwitchState(State newState)

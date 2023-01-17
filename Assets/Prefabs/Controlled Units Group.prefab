@@ -395,6 +395,7 @@ GameObject:
   - component: {fileID: 6114910224656440945}
   - component: {fileID: 3137782748168777053}
   - component: {fileID: 6245649281513251548}
+  - component: {fileID: 5719727434548323620}
   m_Layer: 3
   m_Name: Select Trigger
   m_TagString: Untagged
@@ -532,6 +533,28 @@ MonoBehaviour:
   version: 1
   penalty: 1000
   randomStep: 100
+--- !u!114 &5719727434548323620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3907911973181152389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb6a34d769a1e4ac7b0b30e433aa443c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  smoothType: 0
+  subdivisions: 2
+  iterations: 2
+  strength: 0.5
+  uniformLength: 1
+  maxSegmentLength: 2
+  bezierTangentLength: 0.4
+  offset: 0.2
+  factor: 0.1
 --- !u!1 &3907911973514396174
 GameObject:
   m_ObjectHideFlags: 0
@@ -616,6 +639,7 @@ MonoBehaviour:
   _unitsCount: 100
   _minDistanceBtwUnits: 1
   _healthIndicator: {fileID: 1603419138666229086}
+  _groupFollowObject: {fileID: 3907911973181152388}
   _centerOfGroup: {fileID: 6114910224656440945}
   _groupSelectTrigger: {fileID: 3118585008250967316}
 --- !u!1 &8603707713462696424
@@ -686,6 +710,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6722b26c094fe594cb1eb6f092565257, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _unit: {fileID: 0}
   _decalProjector: {fileID: 7282748064857740724}
   _fadeTime: 0.25
   _enableAlpha: 0.8
@@ -756,6 +781,11 @@ PrefabInstance:
       propertyPath: _seeker
       value: 
       objectReference: {fileID: 5288235444892604444}
+    - target: {fileID: 4154446157389383212, guid: cfadfc317f49a5d4cb6054b9d43d021b,
+        type: 3}
+      propertyPath: _unitsGroup
+      value: 
+      objectReference: {fileID: 3907911973639044248}
     - target: {fileID: 4772464812505214312, guid: cfadfc317f49a5d4cb6054b9d43d021b,
         type: 3}
       propertyPath: m_Name

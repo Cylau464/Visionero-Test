@@ -8,6 +8,8 @@ using Units;
 using Pathfinding;
 using Units.Attributes;
 using System.Collections;
+using UnityEngine.UI;
+using TMPro;
 
 namespace States.Characters
 {
@@ -24,8 +26,12 @@ namespace States.Characters
         [SerializeField] protected CharacterAnimationController _animationController;
         public CharacterAnimationController AnimationController => _animationController;
         [SerializeField] private Collider _collider;
+        [field: SerializeField] public Seeker Seeker { get; private set; }
 
         [Header("Combat Properties")]
+        [SerializeField] private Image _range;
+        [SerializeField] private Image _melee;
+        [SerializeField] private TMP_Text _stateText;
         [SerializeField] private SphereCollider _agroTrigger;
         //[SerializeField] private float _agroRadius = 5f;
         [SerializeField] private LayerMask _targetMask;
@@ -50,7 +56,8 @@ namespace States.Characters
         public IList<UnitHealth> Targets => _targets.AsReadOnly();
         public UnitHealth Target;
         public AttackType CurrentAttackType { get; private set; }
-        public bool AttackCharged { get; private set; }
+        public bool MeleeAttackCharged { get; private set; }
+        public bool RangeAttackCharged { get; private set; }
 
         public AttackAttributes CurrentAttack
         {
@@ -94,6 +101,15 @@ namespace States.Characters
                     SwitchAttackType(AttackType.Melee);
                     break;
             }
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            _range.color = RangeAttackCharged ? Color.green : Color.red;
+            _melee.color = MeleeAttackCharged ? Color.green : Color.red;
+            _stateText.text = CurrentState.GetType().Name;
         }
 
         protected override void OnDestroy()
@@ -209,7 +225,7 @@ namespace States.Characters
             return closestTarget;
         }
 
-        public void SetDestionation(Vector3 destination, bool heldedPosition = false)
+        public void SetDestination(Vector3 destination, bool heldedPosition = false)
         {
             _aiPath.destination = destination;
 
@@ -224,7 +240,9 @@ namespace States.Characters
         {
             if (newAttackType == CurrentAttackType) return;
 
-            ResetAttackPoint();
+            if(newAttackType == AttackType.Melee)
+                ResetAttackPoint(AttackType.Range);
+
             CurrentAttackType = newAttackType;
             _agroTrigger.radius = CurrentAttack.AgroRadius;
 
@@ -232,22 +250,42 @@ namespace States.Characters
                 OnAttackTypeSwitched?.Invoke(this, CurrentAttackType);
         }
 
-        public void ChargeAttackPoint(float time)
+        public void ChargeAttackPoint(AttackType attackType, float time)
         {
-            if (_chargingAttackCor != null || AttackCharged == true) return;
+            if (attackType == AttackType.Melee)
+            {
+                if (MeleeAttackCharged == true) return;
+            }
+            else
+            {
+                if (RangeAttackCharged == true) return;
+            }
 
-            _chargingAttackCor = StartCoroutine(ChargingAttackPoint(time));
+            if (_chargingAttackCor != null)
+                StopCoroutine(_chargingAttackCor);
+
+            _chargingAttackCor = StartCoroutine(ChargingAttackPoint(attackType, time));
         }
 
-        private IEnumerator ChargingAttackPoint(float time)
+        private IEnumerator ChargingAttackPoint(AttackType attackType, float time)
         {
             yield return new WaitForSeconds(time);
 
-            AttackCharged = true;
+            if (attackType == AttackType.Melee)
+            {
+                MeleeAttackCharged = true;
+                RangeAttackCharged = false;
+            }
+            else
+            {
+                RangeAttackCharged = true;
+                MeleeAttackCharged = false;
+            }
+
             _chargingAttackCor = null;
         }
 
-        public void ResetAttackPoint()
+        public void ResetAttackPoint(AttackType attackType)
         {
             if (_chargingAttackCor != null)
             {
@@ -255,7 +293,10 @@ namespace States.Characters
                 _chargingAttackCor = null;
             }
 
-            AttackCharged = false;
+            if(attackType == AttackType.Melee)
+                MeleeAttackCharged = false;
+            else
+                RangeAttackCharged = false;
         }
 
         public class Factory : PrefabFactory<CharacterStateMachine> { }

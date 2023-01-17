@@ -40,5 +40,15 @@
         {
             return StateFactory.Create<CharacterAttackState>(Machine, this);
         }
+
+        public virtual State Aim()
+        {
+            return StateFactory.Create<CharacterAimState>(Machine, this);
+        }
+
+        public virtual State FindTarget()
+        {
+            return StateFactory.Create<CharacterFindState>(Machine, this);
+        }
     }
 }

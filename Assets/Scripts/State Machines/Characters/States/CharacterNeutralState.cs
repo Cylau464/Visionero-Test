@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
 using Units.Attributes;
+using UnityEngine;
 
 namespace States.Characters
 {
     public class CharacterNeutralState : CharacterState
     {
-        private bool _hasTarget;
+        private float _currentBattleDelay;
+        //private bool _hasTarget;
 
         public CharacterNeutralState(CharacterStateMachine machine, CharacterStateFactory factory) : base(machine, factory)
         {
@@ -16,27 +18,29 @@ namespace States.Characters
 
         public override void CheckSwitchStates()
         {
-            if(_hasTarget == true && Machine.AIPath.reachedDestination == true)
-                SwitchState(Factory.Battle());
+            CheckTargets();
         }
 
         public override void Enter()
         {
             Machine.Health.OnDead += Dead;
-            Machine.OnFindTarget += OnFindTarget;
-            Machine.OnLostAllTargets += OnLostTarget;
+            //Machine.OnFindTarget += OnFindTarget;
+            //Machine.OnLostAllTargets += OnLostTarget;
 
-            if (Machine.Combat.AttackType == AttackType.Melee)
-                Machine.ChargeAttackPoint(Machine.Combat.Melee.PrepareTime);
+            Machine.ChargeAttackPoint(AttackType.Melee, Machine.Combat.Melee.PrepareTime);
+            Machine.SetDestination(Machine.HeldedPosition);
 
-            Machine.SetDestionation(Machine.HeldedPosition);
+            if (Machine.AIPath.reachedDestination == false)
+                _currentBattleDelay = Machine.Combat.BattleDelayAfterMove + Time.time;
+
+            CheckTargets();
         }
 
         public override void Exit()
         {
             Machine.Health.OnDead -= Dead;
-            Machine.OnFindTarget -= OnFindTarget;
-            Machine.OnLostAllTargets -= OnLostTarget;
+            //Machine.OnFindTarget -= OnFindTarget;
+            //Machine.OnLostAllTargets -= OnLostTarget;
         }
 
         public override void InitializeSubState()
@@ -52,20 +56,36 @@ namespace States.Characters
             CheckSwitchStates();
         }
 
-        private void OnFindTarget(CharacterStateMachine machine)
+        private void CheckTargets()
         {
-            _hasTarget = true;
-
-            //if (Machine.IgnoreTargetsWhenMove == true
-            //    && Machine.AIPath.remainingDistance /*Machine.Agent.remainingDistance */> Machine.StopIgnoringDestinationDistance)
-            //    return;
-
-            //SwitchState(Factory.Battle());
+            if (Machine.Targets.Count > 0)
+            {
+                if (Machine.AIPath.reachedDestination == true)
+                {
+                    SwitchState(Factory.Battle());
+                }
+                else
+                {
+                    if (Machine.CurrentAttackType == AttackType.Melee && _currentBattleDelay <= Time.time)
+                        SwitchState(Factory.Battle());
+                }
+            }
         }
 
-        private void OnLostTarget(CharacterStateMachine machine)
-        {
-            _hasTarget = false;
-        }
+        //private void OnFindTarget(CharacterStateMachine machine)
+        //{
+        //    _hasTarget = true;
+
+        //    //if (Machine.IgnoreTargetsWhenMove == true
+        //    //    && Machine.AIPath.remainingDistance /*Machine.Agent.remainingDistance */> Machine.StopIgnoringDestinationDistance)
+        //    //    return;
+
+        //    //SwitchState(Factory.Battle());
+        //}
+
+        //private void OnLostTarget(CharacterStateMachine machine)
+        //{
+        //    _hasTarget = false;
+        //}
     }
 }

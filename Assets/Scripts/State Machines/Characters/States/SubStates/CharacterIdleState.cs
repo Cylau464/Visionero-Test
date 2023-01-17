@@ -9,13 +9,15 @@ namespace States.Characters
         public override void CheckSwitchStates()
         {
             if (Machine.AIPath.reachedDestination/*Agent.ReachedDestinationOrGaveUp()*/ == false)
+            {
                 SwitchState(Factory.Move());
+            }
         }
 
         public override void Enter()
         {
             if (Machine.Combat.AttackType != AttackType.Melee)
-                Machine.ChargeAttackPoint(Machine.CurrentAttack.PrepareTime);
+                Machine.ChargeAttackPoint(AttackType.Range, Machine.CurrentAttack.PrepareTime);
         }
 
         public override void Exit()

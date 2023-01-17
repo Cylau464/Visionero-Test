@@ -21,7 +21,7 @@ namespace Units
         [SerializeField] private float _minDistanceBtwUnits = .5f;
         [Space]
         [SerializeField] private UnitsGroupHealthIndicator _healthIndicator;
-        //[SerializeField] private Transform _groupFollowObject;
+        [SerializeField] private Transform _groupFollowObject;
         [SerializeField] private AIPath _centerOfGroup;
 
 
@@ -29,14 +29,17 @@ namespace Units
         private bool _groupHaveTarget;
         private Vector3 _centerPosition;
 
+        public CharacterStateMachine CenterUnit => _units.OrderBy(x => Vector3.Distance(x.transform.position, _groupFollowObject.position)).First();
+
         [Inject] private CharacterStateMachine.Factory _unitFactory;
 
+        public Action OnUnitDead { get; set; }
         public Action<UnitsGroup> OnGroupDead { get; set; }
 
         private Vector3[] _positions = new Vector3[] { };
         private float _radius;
 
-        protected virtual void Start()
+        protected virtual void Awake()
         {
             SpawnUnits();
         }
@@ -45,7 +48,7 @@ namespace Units
         {
             foreach (CharacterStateMachine unit in _units)
             {
-                unit.OnDead -= OnUnitDead;
+                unit.OnDead -= UnitDead;
                 unit.OnAttackTypeSwitched -= OnAttackTypeSwitched;
                 //unit.OnFindTarget -= OnUnitFindTarget;
                 //unit.OnLostAllTargets -= OnUnitLostAllTargets;
@@ -54,7 +57,7 @@ namespace Units
 
         protected virtual void Update()
         {
-            //if(_units.Count > 0)
+            //if (_units.Count > 0)
             //    _groupFollowObject.position = CalculateCenterOfUnits();
         }
 
@@ -81,7 +84,7 @@ namespace Units
             unit.name += " " + index;
             unit.SetUnitsGroup(this);
 
-            unit.OnDead += OnUnitDead;
+            unit.OnDead += UnitDead;
             unit.OnAttackTypeSwitched += OnAttackTypeSwitched;
             //unit.OnFindTarget += OnUnitFindTarget;
             //unit.OnLostAllTargets += OnUnitLostAllTargets;
@@ -90,10 +93,11 @@ namespace Units
             return unit.Health;
         }
 
-        private void OnUnitDead(CharacterStateMachine unit)
+        private void UnitDead(CharacterStateMachine unit)
         {
-            unit.OnDead -= OnUnitDead;
+            unit.OnDead -= UnitDead;
             _units.Remove(unit);
+            OnUnitDead?.Invoke();
 
             if (_units.Count <= 0)
                 GroupDead();
@@ -175,7 +179,7 @@ namespace Units
                         }
                     }
 
-                    units[unitIndex].SetDestionation(destinations[i], true);
+                    units[unitIndex].SetDestination(destinations[i], true);
                     units.RemoveAt(unitIndex);
                     curDistance = float.MaxValue;
                     unitIndex = 0;
@@ -183,7 +187,7 @@ namespace Units
             }
             else
             {
-                units[0].SetDestionation(centerPosition, true);
+                units[0].SetDestination(centerPosition, true);
             }
 
             _centerOfGroup.destination = centerPosition;

@@ -19,14 +19,16 @@ MonoBehaviour:
   <Combat>k__BackingField:
     <AttackType>k__BackingField: 2
     <MaxDistanceFromPosition>k__BackingField: 5
+    <BattleDelayAfterMove>k__BackingField: 2
     <Melee>k__BackingField:
       <PrepareTime>k__BackingField: 1.5
       <Distance>k__BackingField: 2
       <AgroRadius>k__BackingField: 6
+      <Accuracy>k__BackingField: 0
     <Range>k__BackingField:
       <PrepareTime>k__BackingField: 1
       <Distance>k__BackingField: 15
       <AgroRadius>k__BackingField: 15
-      <MinDistance>k__BackingField: 2
+      <Accuracy>k__BackingField: 0
+      <MinDistance>k__BackingField: 5
       <AimTime>k__BackingField: 1
-      <Accuracy>k__BackingField: 25

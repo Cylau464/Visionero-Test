@@ -1,4 +1,6 @@
-﻿namespace States.Characters
+﻿using UnityEngine;
+
+namespace States.Characters
 {
     public abstract class CharacterState : State
     {
@@ -10,6 +12,21 @@
         protected virtual void Dead(UnitHealth health)
         {
             SwitchState(Factory.Dead());
+        }
+
+        protected virtual UnitHealth GetTarget()
+        {
+            UnitHealth target = Machine.GetClosestTarget();
+
+            if (target != null && target != Machine.Target)
+            {
+                if (Machine.Target != null)
+                    Machine.Target.RemoveTargetedUnit();
+
+                target.AddTargetedUnit();
+            }
+
+            return target;
         }
     }
 }

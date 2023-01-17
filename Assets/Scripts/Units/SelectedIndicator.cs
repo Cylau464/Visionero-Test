@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using States.Characters;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -6,6 +7,7 @@ namespace Units
 {
     public class SelectedIndicator : MonoBehaviour
     {
+        [SerializeField] private CharacterStateMachine _unit;
         [SerializeField] private DecalProjector _decalProjector;
         [SerializeField] private float _fadeTime = .1f;
         [SerializeField] private float _enableAlpha = .8f;
@@ -13,6 +15,16 @@ namespace Units
         private ControlledUnitsGroup _unitsGroup;
         private Material _material;
         private const string ALPHA_PROPERTY_NAME = "_Alpha";
+
+        private void OnEnable()
+        {
+            _unit.OnDead += OnUnitDead;
+        }
+
+        private void OnDisable()
+        {
+            _unit.OnDead -= OnUnitDead;
+        }
 
         private void Awake()
         {
@@ -46,6 +58,17 @@ namespace Units
         {
             StopAllCoroutines();
             StartCoroutine(Fade(0f));
+        }
+
+        private void OnUnitDead(CharacterStateMachine unit)
+        {
+            Disable();
+
+            if (_unitsGroup != null)
+            {
+                _unitsGroup.OnSelected -= Enable;
+                _unitsGroup.OnUnselected -= Disable;
+            }
         }
 
         private IEnumerator Fade(float targetAlpha)

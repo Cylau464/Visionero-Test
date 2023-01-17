@@ -84,6 +84,7 @@ MonoBehaviour:
   _unitsCount: 3
   _minDistanceBtwUnits: 0.5
   _healthIndicator: {fileID: 7630557253901723399}
+  _groupFollowObject: {fileID: 8107139912292143000}
   _centerOfGroup: {fileID: 5225790828259232729}
 --- !u!1 &8428346991069796077
 GameObject:
@@ -699,6 +700,11 @@ PrefabInstance:
       propertyPath: _seeker
       value: 
       objectReference: {fileID: 1107945665796704725}
+    - target: {fileID: 4154446157389383212, guid: cfadfc317f49a5d4cb6054b9d43d021b,
+        type: 3}
+      propertyPath: _unitsGroup
+      value: 
+      objectReference: {fileID: 3399773533228754229}
     - target: {fileID: 4772464812505214312, guid: cfadfc317f49a5d4cb6054b9d43d021b,
         type: 3}
       propertyPath: m_Name

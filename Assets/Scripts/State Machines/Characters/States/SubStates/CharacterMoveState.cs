@@ -15,7 +15,9 @@ namespace States.Characters
         public override void Enter()
         {
             if (Machine.Combat.AttackType != AttackType.Melee)
-                Machine.ResetAttackPoint();
+                Machine.ResetAttackPoint(AttackType.Range);
+
+            Machine.ChargeAttackPoint(AttackType.Melee, Machine.Combat.Melee.PrepareTime);
         }
 
         public override void Exit()
