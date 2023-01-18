@@ -271,6 +271,7 @@ MonoBehaviour:
   _health: {fileID: 3309233381696931564}
   _animationController: {fileID: 7705889706029122988}
   _collider: {fileID: 560562971855743838}
+  _rigidBody: {fileID: 8953338861537473404}
   <Seeker>k__BackingField: {fileID: 2084572928686013849}
   _range: {fileID: 5022549744310730936}
   _melee: {fileID: 4822587596678575396}
@@ -279,7 +280,8 @@ MonoBehaviour:
   _targetMask:
     serializedVersion: 2
     m_Bits: 64
-  Target: {fileID: 3309233381696931564}
+  Target: {fileID: 0}
+  BattleHeldedPosition: {x: 0, y: 0, z: 0}
   _selectedIndicator: {fileID: 175665978715959830}
 --- !u!114 &3309233381696931564
 MonoBehaviour:

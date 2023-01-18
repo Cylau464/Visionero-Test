@@ -1,4 +1,6 @@
-﻿namespace States.Characters
+﻿using Units.Attributes;
+
+namespace States.Characters
 {
     public class CharacterStateFactory : BaseStateFactory
     {
@@ -36,9 +38,9 @@
             return StateFactory.Create<CharacterChaseState>(Machine, this);
         }
 
-        public virtual State Attack()
+        public virtual State Attack(AttackType attackType)
         {
-            return StateFactory.Create<CharacterAttackState>(Machine, this);
+            return StateFactory.Create<CharacterAttackState>(Machine, this, attackType);
         }
 
         public virtual State Aim()

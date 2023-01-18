@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Units.Attributes;
+using UnityEngine;
 
 namespace States.Characters.Enemy
 {
@@ -38,9 +39,9 @@ namespace States.Characters.Enemy
             return StateFactory.Create<EnemyChaseState>(Machine, this);
         }
 
-        public override State Attack()
+        public override State Attack(AttackType attackType)
         {
-            return StateFactory.Create<EnemyAttackState>(Machine, this);
+            return StateFactory.Create<EnemyAttackState>(Machine, this, attackType);
         }
 
         public State Arrival()

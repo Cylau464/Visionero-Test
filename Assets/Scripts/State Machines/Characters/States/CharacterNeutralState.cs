@@ -30,9 +30,6 @@ namespace States.Characters
             Machine.ChargeAttackPoint(AttackType.Melee, Machine.Combat.Melee.PrepareTime);
             Machine.SetDestination(Machine.HeldedPosition);
 
-            if (Machine.AIPath.reachedDestination == false)
-                _currentBattleDelay = Machine.Combat.BattleDelayAfterMove + Time.time;
-
             CheckTargets();
         }
 
@@ -53,6 +50,9 @@ namespace States.Characters
 
         public override void Update()
         {
+            Machine.AnimationController.SetMoveSpeed(Machine.AIPath.velocity.magnitude);
+
+            UpdateAttackType();
             CheckSwitchStates();
         }
 
@@ -60,14 +60,18 @@ namespace States.Characters
         {
             if (Machine.Targets.Count > 0)
             {
+                UpdateTarget();
+
                 if (Machine.AIPath.reachedDestination == true)
                 {
                     SwitchState(Factory.Battle());
                 }
                 else
                 {
-                    if (Machine.CurrentAttackType == AttackType.Melee && _currentBattleDelay <= Time.time)
+                    if (Machine.CurrentAttackType == AttackType.Melee && Machine.UnitsGroup.CurrentBattleDelayAfterMove <= Time.time)
+                    {
                         SwitchState(Factory.Battle());
+                    }
                 }
             }
         }

@@ -7,6 +7,8 @@ namespace States.Characters
     {
         private float _checkClosestTargetInterval = 1f;
         private float _curCheckDelay;
+        private float _ignoreTargetTime = 2f;
+        private float _curIgnoreTargetTime;
 
         public CharacterChaseState(CharacterStateMachine machine, CharacterStateFactory factory) : base(machine, factory)
         {
@@ -14,25 +16,16 @@ namespace States.Characters
 
         public override void CheckSwitchStates()
         {
+            if (_curIgnoreTargetTime > Time.time) return;
+
             if (Machine.Target == null) return;
 
-            //float distanceFromPosition = Vector3.Distance(Machine.transform.position, Machine.HeldedPosition);
+            if (ReturnToHeldedPosition() == true) return;
 
-            //if (distanceFromPosition >= Machine.Combat.MaxDistanceFromPosition)
-            //{
-            //    Machine.SetDestionation(Machine.HeldedPosition);
-            //    return;
-            //}
-
-            float distanceToTarget = Vector3.Distance(Machine.transform.position, Machine.Target.transform.position) - Machine.Target.ExtraRangeForAttack;
+            float distanceToTarget = GetDistanceToTarget();
 
             if (distanceToTarget <= Machine.CurrentAttack.Distance)
-            {
-                if (Machine.CurrentAttackType == AttackType.Range)
-                    SwitchState(Factory.Aim());
-                else
-                    SwitchState(Factory.Attack());
-            }
+                TryToAttack();
         }
 
         public override void Enter()
@@ -44,6 +37,7 @@ namespace States.Characters
         public override void Exit()
         {
             Machine.OnAttackTypeSwitched -= OnAttackTypeSwitched;
+            Machine.AIPath.maxSpeed = Machine.Movement.MoveSpeed;
         }
 
         public override void InitializeSubState()
@@ -56,10 +50,9 @@ namespace States.Characters
             if (_curCheckDelay <= Time.time)
                 UpdateTarget();
 
-            if(Machine.Target != null)
+            if(Machine.Target != null && _curIgnoreTargetTime <= Time.time)
                 Machine.SetDestination(Machine.Target.transform.position);
 
-            Machine.AnimationController.SetMoveSpeed(Machine.AIPath.velocity.magnitude);
             CheckSwitchStates();
         }
 
@@ -69,14 +62,24 @@ namespace States.Characters
             return base.GetTarget();
         }
 
-        private void UpdateTarget()
-        {
-            Machine.Target = GetTarget();
-        }
-
-        private void OnAttackTypeSwitched(CharacterStateMachine machine, AttackType attackType)
+        private void OnAttackTypeSwitched()
         {
             UpdateTarget();
+        }
+
+        private bool ReturnToHeldedPosition()
+        {
+            float distanceFromPosition = Vector3.Distance(Machine.transform.position, Machine.BattleHeldedPosition);
+
+            if (distanceFromPosition >= Machine.Combat.MaxDistanceFromPosition)
+            {
+                Machine.SetDestination(Machine.BattleHeldedPosition);
+                _curIgnoreTargetTime = Time.time + _ignoreTargetTime;
+                Machine.AIPath.maxSpeed = Machine.Movement.MaxChaseMoveSpeed;
+                return true;
+            }
+
+            return false;
         }
     }
 }

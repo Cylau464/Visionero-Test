@@ -5,7 +5,7 @@ namespace States.Characters
 {
     public class CharacterAimState : CharacterState
     {
-        private float _aimTime;
+        private float _currentAimTime;
 
         public CharacterAimState(CharacterStateMachine machine, CharacterStateFactory factory) : base(machine, factory)
         {
@@ -15,21 +15,14 @@ namespace States.Characters
         {
             if (Machine.Target != null)
             {
-                if (_aimTime < Time.time)
+                if (_currentAimTime < Time.time)
                 {
-                    SwitchState(Factory.Attack());
+                    SwitchState(Factory.Attack(AttackType.Range));
                     return;
                 }
 
-                if (Vector3.Distance(Machine.Target.transform.position, Machine.transform.position) > Machine.CurrentAttack.Distance)
-                {
-                    SwitchState(Factory.Chase());
-                }
-                else
-                {
-                    if (Machine.CurrentAttackType == AttackType.Range)
-                        SwitchState(Factory)
-                }
+                if (GetDistanceToTarget() > Machine.Combat.Range.Distance)
+                    UpdateTarget();
             }
             else
             {
@@ -39,13 +32,14 @@ namespace States.Characters
 
         public override void Enter()
         {
-            Machine.AnimationController.Aim();
-            _aimTime = Time.time + Machine.Combat.Range.AimTime;
+            Machine.AnimationController.SetAim(true);
+            _currentAimTime = Time.time + Machine.Combat.Range.AimTime;
+            Machine.SetDestination(Machine.transform.position);
         }
 
         public override void Exit()
         {
-
+            Machine.AnimationController.SetAim(false);
         }
 
         public override void InitializeSubState()
@@ -56,18 +50,7 @@ namespace States.Characters
         public override void Update()
         {
             CheckSwitchStates();
-
-            if (Machine.Target != null)
-            {
-                Vector3 direction = (Machine.Target.transform.position - Machine.transform.position).normalized;
-                direction.y = 0f;
-                Machine.transform.rotation = Quaternion.LookRotation(direction);
-            }
-        }
-
-        private void UpdateTarget()
-        {
-            Machine.Target = GetTarget();
+            RotateToTarget();
         }
     }
 }

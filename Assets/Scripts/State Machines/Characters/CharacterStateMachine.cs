@@ -26,12 +26,13 @@ namespace States.Characters
         [SerializeField] protected CharacterAnimationController _animationController;
         public CharacterAnimationController AnimationController => _animationController;
         [SerializeField] private Collider _collider;
+        [SerializeField] private Rigidbody _rigidBody;
         [field: SerializeField] public Seeker Seeker { get; private set; }
 
         [Header("Combat Properties")]
         [SerializeField] private Image _range;
         [SerializeField] private Image _melee;
-        [SerializeField] private TMP_Text _stateText;
+        [SerializeField] public TMP_Text _stateText;
         [SerializeField] private SphereCollider _agroTrigger;
         //[SerializeField] private float _agroRadius = 5f;
         [SerializeField] private LayerMask _targetMask;
@@ -54,10 +55,11 @@ namespace States.Characters
 
         private List<UnitHealth> _targets = new List<UnitHealth>();
         public IList<UnitHealth> Targets => _targets.AsReadOnly();
-        public UnitHealth Target;
+        [HideInInspector] public UnitHealth Target = null;
         public AttackType CurrentAttackType { get; private set; }
         public bool MeleeAttackCharged { get; private set; }
         public bool RangeAttackCharged { get; private set; }
+        public bool CurrentAttackCharged => CurrentAttackType == AttackType.Melee ? MeleeAttackCharged : RangeAttackCharged;
 
         public AttackAttributes CurrentAttack
         {
@@ -71,13 +73,17 @@ namespace States.Characters
         }
 
         public UnitCombatAttributes Combat => _config.Combat;
+        public UnitMovementAttributes Movement => _config.Movement;
 
+        public UnitsGroup UnitsGroup { get; private set; }
         public Vector3 HeldedPosition { get; private set; }
+        public Vector3 BattleHeldedPosition;
 
         protected new CharacterStateFactory States { get; private set; }
 
         public Action OnHeldedPositionSetted { get; set; }
-        public Action<CharacterStateMachine, AttackType> OnAttackTypeSwitched { get; set; }
+        public Action OnAttackTypeSwitched { get; set; }
+        public Action<CharacterStateMachine, AttackType> OnAttackTypeGroupSwitched { get; set; }
         public Action<CharacterStateMachine> OnFindTarget { get; set; }
         public Action<CharacterStateMachine> OnLostAllTargets { get; set; }
         public Action<CharacterStateMachine> OnDead { get; set; }
@@ -109,7 +115,7 @@ namespace States.Characters
 
             _range.color = RangeAttackCharged ? Color.green : Color.red;
             _melee.color = MeleeAttackCharged ? Color.green : Color.red;
-            _stateText.text = CurrentState.GetType().Name;
+            _stateText.text = CurrentAttackType.ToString();
         }
 
         protected override void OnDestroy()
@@ -129,13 +135,13 @@ namespace States.Characters
 
         public virtual void SetUnitsGroup(UnitsGroup unitsGroup)
         {
-
+            UnitsGroup = unitsGroup;
         }
 
         public virtual void Dead()
         {
+            _rigidBody.isKinematic = true;
             _collider.enabled = false;
-            //_agent.enabled = false;
             _aiPath.enabled = false;
             OnDead?.Invoke(this);
         }
@@ -187,7 +193,10 @@ namespace States.Characters
                 _targets.Remove(target);
 
                 if (_targets.Count <= 0)
+                {
+                    Target = null;
                     OnLostAllTargets?.Invoke(this);
+                }
             }
         }
 
@@ -206,7 +215,18 @@ namespace States.Characters
                 {
                     if (target.IsDead == true) continue;
 
-                    if (onlyFreeTargets == true && target.IsTargeted == true) continue;
+                    if (onlyFreeTargets == true && target.IsTargeted == true)
+                    {
+                        if (target.CountOfTargeted == 1)
+                        {
+                            if (target.IsMyTarget(this) == false)
+                                continue;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
 
                     float distance = Vector3.Distance(transform.position, target.transform.position);
                 
@@ -236,7 +256,7 @@ namespace States.Characters
             }
         }
 
-        public void SwitchAttackType(AttackType newAttackType, bool callback = true)
+        public void SwitchAttackType(AttackType newAttackType, bool groupCallback = true)
         {
             if (newAttackType == CurrentAttackType) return;
 
@@ -245,9 +265,11 @@ namespace States.Characters
 
             CurrentAttackType = newAttackType;
             _agroTrigger.radius = CurrentAttack.AgroRadius;
+            OnAttackTypeSwitched?.Invoke();
+            Debug.Log(name + " " + newAttackType);
 
-            if (callback == true)
-                OnAttackTypeSwitched?.Invoke(this, CurrentAttackType);
+            if (groupCallback == true)
+                OnAttackTypeGroupSwitched?.Invoke(this, CurrentAttackType);
         }
 
         public void ChargeAttackPoint(AttackType attackType, float time)

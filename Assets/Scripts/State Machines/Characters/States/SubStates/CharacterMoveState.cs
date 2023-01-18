@@ -33,7 +33,6 @@ namespace States.Characters
         public override void Update()
         {
             CheckSwitchStates();
-            Machine.AnimationController.SetMoveSpeed(Machine.AIPath/*Agent*/.velocity.magnitude);
         }
     }
 }

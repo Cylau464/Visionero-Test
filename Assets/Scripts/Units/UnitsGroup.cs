@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Units.Attributes;
+using Unity.VisualScripting;
 using UnityEditor.Sprites;
 using UnityEngine;
 using Zenject;
@@ -19,17 +20,22 @@ namespace Units
         [SerializeField] private Transform _unitsPivot;
         [SerializeField] private int _unitsCount = 3;
         [SerializeField] private float _minDistanceBtwUnits = .5f;
+
         [Space]
         [SerializeField] private UnitsGroupHealthIndicator _healthIndicator;
-        [SerializeField] private Transform _groupFollowObject;
+        //[SerializeField] private Transform _groupFollowObject;
         [SerializeField] private AIPath _centerOfGroup;
+
+        [Space]
+        [SerializeField] private float _battleDelayAfterMove = 2f;
 
 
         protected List<CharacterStateMachine> _units = new List<CharacterStateMachine>();
         private bool _groupHaveTarget;
         private Vector3 _centerPosition;
 
-        public CharacterStateMachine CenterUnit => _units.OrderBy(x => Vector3.Distance(x.transform.position, _groupFollowObject.position)).First();
+        public float CurrentBattleDelayAfterMove { get; private set; }
+        public CharacterStateMachine CenterUnit => _units.OrderBy(x => Vector3.Distance(x.transform.position, _centerOfGroup.position)).First();
 
         [Inject] private CharacterStateMachine.Factory _unitFactory;
 
@@ -49,7 +55,7 @@ namespace Units
             foreach (CharacterStateMachine unit in _units)
             {
                 unit.OnDead -= UnitDead;
-                unit.OnAttackTypeSwitched -= OnAttackTypeSwitched;
+                unit.OnAttackTypeGroupSwitched -= OnAttackTypeGroupSwitched;
                 //unit.OnFindTarget -= OnUnitFindTarget;
                 //unit.OnLostAllTargets -= OnUnitLostAllTargets;
             }
@@ -85,7 +91,7 @@ namespace Units
             unit.SetUnitsGroup(this);
 
             unit.OnDead += UnitDead;
-            unit.OnAttackTypeSwitched += OnAttackTypeSwitched;
+            unit.OnAttackTypeGroupSwitched += OnAttackTypeGroupSwitched;
             //unit.OnFindTarget += OnUnitFindTarget;
             //unit.OnLostAllTargets += OnUnitLostAllTargets;
 
@@ -267,7 +273,7 @@ namespace Units
                 return 0;
         }
 
-        private void OnAttackTypeSwitched(CharacterStateMachine fromUnit, AttackType attackType)
+        private void OnAttackTypeGroupSwitched(CharacterStateMachine fromUnit, AttackType attackType)
         {
             foreach (CharacterStateMachine unit in _units)
             {
@@ -277,17 +283,17 @@ namespace Units
             }
         }
 
-        private void OnDrawGizmos()
-        {
-            foreach (Vector3 pos in _positions)
-            {
-                Gizmos.color = Color.cyan;
-                Gizmos.DrawWireSphere(pos, _radius);
-            }
+        //private void OnDrawGizmos()
+        //{
+        //    foreach (Vector3 pos in _positions)
+        //    {
+        //        Gizmos.color = Color.cyan;
+        //        Gizmos.DrawWireSphere(pos, _radius);
+        //    }
 
-            Gizmos.color = Color.white;
-            Gizmos.DrawWireCube(_centerPosition, Vector3.one);
-        }
+        //    Gizmos.color = Color.white;
+        //    Gizmos.DrawWireCube(_centerPosition, Vector3.one);
+        //}
 
         private Vector3 CalculateCenterOfUnits()
         {
@@ -305,6 +311,7 @@ namespace Units
         {
             Vector3[] destinations = GetUnitsPositions(destination, _units.Count);
             SetDestinations(destinations.ToList());
+            CurrentBattleDelayAfterMove = Time.time + _battleDelayAfterMove;
         }
     }
 }

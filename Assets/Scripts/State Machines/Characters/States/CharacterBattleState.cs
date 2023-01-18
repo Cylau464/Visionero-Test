@@ -25,15 +25,8 @@ namespace States.Characters
 
             Machine.AnimationController.SetBattle(true);
 
-            if (Machine.CurrentAttackType == AttackType.Range)
-            {
-                float distanceToTarget = Vector3.Distance(Machine.transform.position, Machine.Target.transform.position);
-
-                if (distanceToTarget <= Machine.Combat.Range.MinDistance)
-                    Machine.SwitchAttackType(AttackType.Melee);
-            }
-
             Machine.ChargeAttackPoint(Machine.CurrentAttackType, Machine.CurrentAttack.PrepareTime);
+            Machine.BattleHeldedPosition = Machine.AIPath.position;
         }
 
         public override void Exit()
@@ -46,25 +39,20 @@ namespace States.Characters
             Machine.AnimationController.SetBattle(false);
 
             if (Machine.Target != null)
-                Machine.Target.RemoveTargetedUnit();
+                Machine.Target.RemoveTargetedUnit(Machine);
         }
 
         public override void InitializeSubState()
         {
-            SetSubState(Factory.Chase());
+            SetSubState(Factory.FindTarget());
         }
 
         public override void Update()
         {
+            Machine.AnimationController.SetMoveSpeed(Machine.AIPath.velocity.magnitude);
+
+            UpdateAttackType();
             CheckSwitchStates();
-
-            //if (Machine.CurrentAttackType == AttackType.Range)
-            //{
-            //    float distanceToTarget = Vector3.Distance(Machine.transform.position, Machine.Target.transform.position);
-
-            //    if (distanceToTarget <= Machine.Combat.Range.MinDistance)
-            //        Machine.SwitchAttackType(AttackType.Melee);
-            //}
         }
 
         private void OnLostAllTargets(CharacterStateMachine machine)

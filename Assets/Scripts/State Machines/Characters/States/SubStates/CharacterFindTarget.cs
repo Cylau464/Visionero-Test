@@ -16,7 +16,7 @@ namespace States.Characters
         {
             if (Machine.Target != null)
             {
-                float distanceToTarget = Vector3.Distance(Machine.transform.position, Machine.Target.transform.position) - Machine.Target.ExtraRangeForAttack;
+                float distanceToTarget = GetDistanceToTarget();
 
                 if (distanceToTarget > Machine.CurrentAttack.Distance)
                 {
@@ -24,13 +24,9 @@ namespace States.Characters
                 }
                 else
                 {
-                    if (Machine.CurrentAttackType == AttackType.Range)
-                        SwitchState(Factory.Aim());
-                    else
-                        SwitchState(Factory.Attack());
+                    TryToAttack();
                 }
             }
-
         }
 
         public override void Enter()
@@ -55,6 +51,7 @@ namespace States.Characters
                 UpdateTarget();
 
             CheckSwitchStates();
+            RotateToTarget();
         }
 
         protected override UnitHealth GetTarget()
@@ -63,12 +60,7 @@ namespace States.Characters
             return base.GetTarget();
         }
 
-        private void UpdateTarget()
-        {
-            Machine.Target = GetTarget();
-        }
-
-        private void OnAttackTypeSwitched(CharacterStateMachine machine, AttackType attackType)
+        private void OnAttackTypeSwitched()
         {
             UpdateTarget();
         }

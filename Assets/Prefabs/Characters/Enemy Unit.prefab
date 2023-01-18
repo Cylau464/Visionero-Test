@@ -515,6 +515,7 @@ MonoBehaviour:
   _health: {fileID: 5662986366337956025}
   _animationController: {fileID: 7124155117025261175}
   _collider: {fileID: 179045765359246590}
+  _rigidBody: {fileID: 2250282913179962665}
   <Seeker>k__BackingField: {fileID: 702391419278051453}
   _range: {fileID: 7738520242117579299}
   _melee: {fileID: 252832944739809398}
@@ -523,7 +524,8 @@ MonoBehaviour:
   _targetMask:
     serializedVersion: 2
     m_Bits: 8
-  Target: {fileID: 5662986366337956025}
+  Target: {fileID: 0}
+  BattleHeldedPosition: {x: 0, y: 0, z: 0}
 --- !u!195 &4647503807117793660
 NavMeshAgent:
   m_ObjectHideFlags: 0

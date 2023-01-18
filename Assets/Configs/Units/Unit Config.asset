@@ -15,16 +15,16 @@ MonoBehaviour:
   <Health>k__BackingField: 1
   <Movement>k__BackingField:
     <MoveSpeed>k__BackingField: 5
+    <MaxChaseMoveSpeed>k__BackingField: 0
     <RotationSpeed>k__BackingField: 480
   <Combat>k__BackingField:
     <AttackType>k__BackingField: 2
     <MaxDistanceFromPosition>k__BackingField: 5
-    <BattleDelayAfterMove>k__BackingField: 2
     <Melee>k__BackingField:
       <PrepareTime>k__BackingField: 1.5
-      <Distance>k__BackingField: 2
-      <AgroRadius>k__BackingField: 6
-      <Accuracy>k__BackingField: 0
+      <Distance>k__BackingField: 3
+      <AgroRadius>k__BackingField: 5
+      <Accuracy>k__BackingField: 100
     <Range>k__BackingField:
       <PrepareTime>k__BackingField: 1
       <Distance>k__BackingField: 15

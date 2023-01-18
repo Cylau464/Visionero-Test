@@ -39,9 +39,9 @@ namespace Animations
             _animator.SetBool(_inBattleParamID, inBattle);
         }
 
-        public void Aim()
+        public void SetAim(bool state)
         {
-            _animator.SetTrigger(_aimParamID);
+            _animator.SetBool(_aimParamID, state);
         }
 
         public void Attack()
