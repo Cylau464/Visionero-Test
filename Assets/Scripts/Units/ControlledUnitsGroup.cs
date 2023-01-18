@@ -30,7 +30,6 @@ namespace Units
 
         public void Select()
         {
-            // Убрать выбор мёртвых юнитов
             UnitCommander.OnSetDestination += OnSetDestination;
             IsSelected = true;
             OnSelected?.Invoke();

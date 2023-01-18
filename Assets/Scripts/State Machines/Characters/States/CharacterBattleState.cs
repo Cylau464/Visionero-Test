@@ -62,10 +62,10 @@ namespace States.Characters
 
         private void StopBattle()
         {
-            if (Machine.Combat.AttackType == AttackType.Both && Machine.CurrentAttackType == AttackType.Melee)
-            {
-                Machine.SwitchAttackType(AttackType.Range);
-            }
+            //if (Machine.Combat.AttackType == AttackType.Both && Machine.CurrentAttackType == AttackType.Melee)
+            //{
+            //    Machine.SwitchAttackType(AttackType.Range);
+            //}
 
             SwitchState(Factory.Neutral());
         }

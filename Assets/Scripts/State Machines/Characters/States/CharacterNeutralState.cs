@@ -30,7 +30,7 @@ namespace States.Characters
             Machine.ChargeAttackPoint(AttackType.Melee, Machine.Combat.Melee.PrepareTime);
             Machine.SetDestination(Machine.HeldedPosition);
 
-            CheckTargets();
+            //CheckTargets();
         }
 
         public override void Exit()

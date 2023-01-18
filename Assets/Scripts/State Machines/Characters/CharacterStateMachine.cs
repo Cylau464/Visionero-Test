@@ -77,7 +77,7 @@ namespace States.Characters
 
         public UnitsGroup UnitsGroup { get; private set; }
         public Vector3 HeldedPosition { get; private set; }
-        public Vector3 BattleHeldedPosition;
+        [HideInInspector] public Vector3 BattleHeldedPosition;
 
         protected new CharacterStateFactory States { get; private set; }
 
@@ -266,7 +266,6 @@ namespace States.Characters
             CurrentAttackType = newAttackType;
             _agroTrigger.radius = CurrentAttack.AgroRadius;
             OnAttackTypeSwitched?.Invoke();
-            Debug.Log(name + " " + newAttackType);
 
             if (groupCallback == true)
                 OnAttackTypeGroupSwitched?.Invoke(this, CurrentAttackType);

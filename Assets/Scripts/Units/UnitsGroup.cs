@@ -57,7 +57,7 @@ namespace Units
                 unit.OnDead -= UnitDead;
                 unit.OnAttackTypeGroupSwitched -= OnAttackTypeGroupSwitched;
                 //unit.OnFindTarget -= OnUnitFindTarget;
-                //unit.OnLostAllTargets -= OnUnitLostAllTargets;
+                unit.OnLostAllTargets -= OnUnitLostAllTargets;
             }
         }
 
@@ -93,7 +93,7 @@ namespace Units
             unit.OnDead += UnitDead;
             unit.OnAttackTypeGroupSwitched += OnAttackTypeGroupSwitched;
             //unit.OnFindTarget += OnUnitFindTarget;
-            //unit.OnLostAllTargets += OnUnitLostAllTargets;
+            unit.OnLostAllTargets += OnUnitLostAllTargets;
 
             _units.Add(unit);
             return unit.Health;
@@ -131,22 +131,39 @@ namespace Units
             _groupHaveTarget = true;
         }
 
-        private void OnUnitLostAllTargets(CharacterStateMachine unit)
+        private void OnUnitLostAllTargets(CharacterStateMachine fromUnit)
         {
-            if (_groupHaveTarget == false) return;
+            //if (_groupHaveTarget == false) return;
+            bool someUnitInGroupHasTarget = false;
 
-            UnitHealth[] targets = new UnitHealth[] { };
-
-            foreach (CharacterStateMachine u in _units)
+            foreach (CharacterStateMachine unit in _units)
             {
-                if (u == unit) continue;
-
-                if (u.Targets.Count > 0)
+                if (unit.Targets.Count > 0)
                 {
-                    targets = new UnitHealth[u.Targets.Count];
-                    u.Targets.CopyTo(targets, 0);
+                    someUnitInGroupHasTarget = true;
+                    break;
                 }
             }
+
+            if (someUnitInGroupHasTarget == false)
+            {
+                foreach (CharacterStateMachine unit in _units)
+                    unit.SwitchAttackType(AttackType.Range, false);
+            }
+
+
+            //UnitHealth[] targets = new UnitHealth[] { };
+
+            //foreach (CharacterStateMachine u in _units)
+            //{
+            //    if (u == fromUnit) continue;
+
+            //    if (u.Targets.Count > 0)
+            //    {
+            //        targets = new UnitHealth[u.Targets.Count];
+            //        u.Targets.CopyTo(targets, 0);
+            //    }
+            //}
 
             //if (targets.Length > 0)
             //{
@@ -154,7 +171,7 @@ namespace Units
             //    return;
             //}
 
-            _groupHaveTarget = false;
+            //_groupHaveTarget = false;
         }
 
         protected void SetDestinations(List<Vector3> destinations)
