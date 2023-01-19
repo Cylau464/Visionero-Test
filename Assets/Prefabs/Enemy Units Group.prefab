@@ -82,10 +82,10 @@ MonoBehaviour:
     type: 3}
   _unitsPivot: {fileID: 5304927476525729872}
   _unitsCount: 3
-  _minDistanceBtwUnits: 0.5
+  _minDistanceBtwUnits: 1
   _healthIndicator: {fileID: 7630557253901723399}
-  _groupFollowObject: {fileID: 8107139912292143000}
   _centerOfGroup: {fileID: 5225790828259232729}
+  _battleDelayAfterMove: 2
 --- !u!1 &8428346991069796077
 GameObject:
   m_ObjectHideFlags: 0
@@ -709,6 +709,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Path Visualizer (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4772464812505214312, guid: cfadfc317f49a5d4cb6054b9d43d021b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cfadfc317f49a5d4cb6054b9d43d021b, type: 3}

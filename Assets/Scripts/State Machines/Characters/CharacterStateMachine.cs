@@ -71,6 +71,7 @@ namespace States.Characters
                     return Combat.Melee;
             }
         }
+        [HideInInspector] public int AccuracyPseudoRandomMultiplier;
 
         public UnitCombatAttributes Combat => _config.Combat;
         public UnitMovementAttributes Movement => _config.Movement;
@@ -78,7 +79,7 @@ namespace States.Characters
         public UnitsGroup UnitsGroup { get; private set; }
         public Vector3 HeldedPosition { get; private set; }
         [HideInInspector] public Vector3 BattleHeldedPosition;
-
+        
         protected new CharacterStateFactory States { get; private set; }
 
         public Action OnHeldedPositionSetted { get; set; }
@@ -115,7 +116,7 @@ namespace States.Characters
 
             _range.color = RangeAttackCharged ? Color.green : Color.red;
             _melee.color = MeleeAttackCharged ? Color.green : Color.red;
-            _stateText.text = CurrentAttackType.ToString();
+            //_stateText.text = CurrentAttackType.ToString();
         }
 
         protected override void OnDestroy()

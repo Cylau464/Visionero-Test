@@ -62,7 +62,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7140616538687026032
 RectTransform:
   m_ObjectHideFlags: 0
@@ -525,6 +525,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   Target: {fileID: 0}
+  AccuracyPseudoRandomMultiplier: 0
   BattleHeldedPosition: {x: 0, y: 0, z: 0}
 --- !u!195 &4647503807117793660
 NavMeshAgent:

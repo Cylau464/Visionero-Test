@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Units.Modificators;
+using UnityEngine;
 
 namespace Units.Attributes
 {
@@ -19,6 +20,8 @@ namespace Units.Attributes
         [field: SerializeField, Tooltip("If the target is closer than this distance, the unit cannot attack it in ranged combat.")]
         public float MinDistance { get; private set; }
         [field: SerializeField] public float AimTime { get; private set; }
+        [field: SerializeField] public AccuracyModificator DistanceAccuracyModificator { get; private set; }
+        [field: SerializeField] public AccuracyModificator MoveSpeedAccuracyModificator { get; private set; }
     }
 
     [System.Serializable]

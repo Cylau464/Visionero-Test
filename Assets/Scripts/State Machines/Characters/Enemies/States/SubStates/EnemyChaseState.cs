@@ -11,15 +11,5 @@ namespace States.Characters.Enemy
         {
 
         }
-
-        protected override UnitHealth GetTarget()
-        {
-            UnitHealth target = base.GetTarget();
-
-            if (target == null)
-                target = Machine.GetClosestTarget(Machine.BuildngsTargets);
-
-            return target;
-        }
     }
 }

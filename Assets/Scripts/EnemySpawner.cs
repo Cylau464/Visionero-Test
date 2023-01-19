@@ -10,7 +10,7 @@ public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] private Wave[] _waves;
     [SerializeField] private Transform _spawnCenterPoint;
-    [SerializeField] private float _spawnRadius = 30f;
+    //[SerializeField] private float _spawnRadius = 30f;
 
     private int _enemyGroupsLeft;
 
@@ -19,6 +19,7 @@ public class EnemySpawner : MonoBehaviour
     public int TotalEnemy => _waves.Sum(x => x.EnemyForSpawn.Length);
 
     public Action<EnemyUnitsGroup> OnEnemySpawned { get; set; }
+    public Action<EnemySpawner> OnWavesCompleted { get; set; }
 
     private void Start()
     {
@@ -34,7 +35,7 @@ public class EnemySpawner : MonoBehaviour
         {
             foreach (EnemyUnitsGroup enemyPrefab in _waves[i].EnemyForSpawn)
             {
-                spawnPoint = _spawnCenterPoint.position + GetRandomPointOnCircle() * _spawnRadius;
+                spawnPoint = _spawnCenterPoint.position/* + GetRandomPointOnCircle() * _spawnRadius*/;
                 enemy = _enemyGroupFactory.Create(enemyPrefab);
                 enemy.transform.position = spawnPoint;
 
@@ -57,6 +58,8 @@ public class EnemySpawner : MonoBehaviour
                 yield return new WaitForSeconds(_waves[i].IntervalBeforeNext);
             }
         }
+
+        OnWavesCompleted?.Invoke(this);
     }
 
     private void OnEnemyGroupDead(UnitsGroup group)

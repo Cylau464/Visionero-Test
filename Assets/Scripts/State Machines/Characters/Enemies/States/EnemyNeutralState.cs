@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Units;
+using UnityEngine;
 
 namespace States.Characters.Enemy
 {
@@ -9,6 +10,12 @@ namespace States.Characters.Enemy
 
         public EnemyNeutralState(EnemyStateMachine machine, EnemyStateFactory factory) : base(machine, factory)
         {
+        }
+
+        public override void Enter()
+        {
+            base.Enter();
+            Machine.SetDestination(Machine.HeldedPosition);
         }
 
         //public override void InitializeSubState()

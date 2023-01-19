@@ -6,39 +6,43 @@ using Zenject;
 
 public class GameProgressHandler : MonoBehaviour
 {
-    private List<UnitHealth> _defendedBuildings = new List<UnitHealth>();
+    private List<CapturePoint> _capturePoints = new List<CapturePoint>();
     private List<ControlledUnitsGroup> _defenderUnits = new List<ControlledUnitsGroup>();
     private List<UnitsGroup> _enemyGroups = new List<UnitsGroup>();
+    private List<EnemySpawner> _enemySpawners = new List<EnemySpawner>();
+    
     private int _enemyGroupsCount;
     private bool _gameEnded;
-    private EnemySpawner _enemySpawner;
 
     public Action<bool> OnGameEnd { get; set; }
 
     [Inject]
-    private void Consturct(EnemySpawner enemySpawner, List<UnitHealth> defendedBuildings, List<ControlledUnitsGroup> defenderUnits)
+    private void Consturct(List<EnemySpawner> enemySpawners, List<CapturePoint> capturePoints, List<ControlledUnitsGroup> defenderUnits)
     {
-        _enemySpawner = enemySpawner;
-        _enemyGroupsCount = _enemySpawner.TotalEnemy;
-        _defendedBuildings = defendedBuildings;
+        _capturePoints = capturePoints;
         _defenderUnits = defenderUnits;
+        _enemySpawners = new List<EnemySpawner>(enemySpawners);
+
+        foreach(EnemySpawner spawner in _enemySpawners)
+            _enemyGroupsCount = spawner.TotalEnemy;
     }
 
     private void OnEnable()
     {
-        foreach (UnitHealth unit in _defendedBuildings)
-            unit.OnDead += OnDefendedBuildingDestroyed;
+        foreach (CapturePoint point in _capturePoints)
+            point.OnCaptured += OnPointCaptured;
 
         foreach (ControlledUnitsGroup unitsGroup in _defenderUnits)
             unitsGroup.OnGroupDead += OnDefenderGroupDead;
 
-        _enemySpawner.OnEnemySpawned += AddEnemyGroup;
+        foreach (EnemySpawner spawner in _enemySpawners)
+            spawner.OnEnemySpawned += AddEnemyGroup;
     }
 
     private void OnDisable()
     {
-        foreach (UnitHealth unit in _defendedBuildings)
-            unit.OnDead -= OnDefendedBuildingDestroyed;
+        foreach (CapturePoint point in _capturePoints)
+            point.OnCaptured -= OnPointCaptured;
 
         foreach(EnemyUnitsGroup group in _enemyGroups)
             group.OnGroupDead -= OnGroupDead;
@@ -46,7 +50,8 @@ public class GameProgressHandler : MonoBehaviour
         foreach (ControlledUnitsGroup unitsGroup in _defenderUnits)
             unitsGroup.OnGroupDead -= OnDefenderGroupDead;
 
-        _enemySpawner.OnEnemySpawned -= AddEnemyGroup;
+        foreach (EnemySpawner spawner in _enemySpawners)
+            spawner.OnEnemySpawned -= AddEnemyGroup;
     }
 
     private void Lose()
@@ -65,12 +70,12 @@ public class GameProgressHandler : MonoBehaviour
         _gameEnded = true;
     }
 
-    private void OnDefendedBuildingDestroyed(UnitHealth unit)
+    private void OnPointCaptured(CapturePoint point)
     {
-        unit.OnDead -= OnDefendedBuildingDestroyed;
-        _defendedBuildings.Remove(unit);
+        point.OnCaptured -= OnPointCaptured;
+        _capturePoints.Remove(point);
 
-        if (_defendedBuildings.Count <= 0)
+        if (_capturePoints.Count <= 0)
             Lose();
     }
 

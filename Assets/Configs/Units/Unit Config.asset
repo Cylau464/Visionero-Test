@@ -32,3 +32,9 @@ MonoBehaviour:
       <Accuracy>k__BackingField: 25
       <MinDistance>k__BackingField: 5
       <AimTime>k__BackingField: 1
+      <DistanceAccuracyModificator>k__BackingField:
+        <Value>k__BackingField: {x: 80, y: 100}
+        <Threshold>k__BackingField: {x: 5, y: 15}
+      <MoveSpeedAccuracyModificator>k__BackingField:
+        <Value>k__BackingField: {x: 50, y: 100}
+        <Threshold>k__BackingField: {x: 0, y: 5}

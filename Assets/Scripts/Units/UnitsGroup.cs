@@ -27,14 +27,14 @@ namespace Units
         [SerializeField] private AIPath _centerOfGroup;
 
         [Space]
-        [SerializeField] private float _battleDelayAfterMove = 2f;
+        [SerializeField] protected float _battleDelayAfterMove = 2f;
 
 
         protected List<CharacterStateMachine> _units = new List<CharacterStateMachine>();
         private bool _groupHaveTarget;
         private Vector3 _centerPosition;
 
-        public float CurrentBattleDelayAfterMove { get; private set; }
+        public float CurrentBattleDelayAfterMove { get; protected set; }
         public CharacterStateMachine CenterUnit => _units.OrderBy(x => Vector3.Distance(x.transform.position, _centerOfGroup.position)).First();
 
         [Inject] private CharacterStateMachine.Factory _unitFactory;
@@ -326,9 +326,14 @@ namespace Units
 
         protected virtual void OnSetDestination(Vector3 destination)
         {
+            SetGroupDestination(destination);
+            CurrentBattleDelayAfterMove = Time.time + _battleDelayAfterMove;
+        }
+
+        public void SetGroupDestination(Vector3 destination)
+        {
             Vector3[] destinations = GetUnitsPositions(destination, _units.Count);
             SetDestinations(destinations.ToList());
-            CurrentBattleDelayAfterMove = Time.time + _battleDelayAfterMove;
         }
     }
 }

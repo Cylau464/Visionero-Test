@@ -5,8 +5,6 @@ namespace States.Characters.Enemy
 {
     public class EnemyStateMachine : CharacterStateMachine
     {
-        [Inject] private UnitHealth[] _buildingsTargets;
-        public UnitHealth[] BuildngsTargets => _buildingsTargets;
         //public bool IsArrived { get; private set; }
 
         protected new EnemyStateFactory States;

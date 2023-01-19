@@ -1,4 +1,6 @@
-﻿using Units.Attributes;
+﻿using Pathfinding;
+using Units.Attributes;
+using Units.Modificators;
 using UnityEngine;
 
 namespace States.Characters
@@ -54,15 +56,46 @@ namespace States.Characters
         {
             if (Machine.Target != null)
             {
-                int accuracy;
+                float accuracy;
 
                 if (_currentAttackType == AttackType.Melee)
-                    accuracy = Machine.Combat.Melee.Accuracy;
+                    accuracy = Mathf.Max(0f, Machine.Combat.Melee.Accuracy + Machine.Combat.Melee.Accuracy * Machine.AccuracyPseudoRandomMultiplier);
                 else
-                    accuracy = Machine.Combat.Range.Accuracy;
+                {
+                    accuracy = Mathf.Max(0f, Machine.Combat.Range.Accuracy + Machine.Combat.Range.Accuracy * Machine.AccuracyPseudoRandomMultiplier);
 
-                if(accuracy >= Random.value * 100)
+                    AccuracyModificator moveSpeedModificator = Machine.Combat.Range.MoveSpeedAccuracyModificator;
+                    float moveSpeedThresholdPercent = Mathf.InverseLerp(
+                        moveSpeedModificator.Threshold.x,
+                        moveSpeedModificator.Threshold.y,
+                        Machine.Target.GetComponent<AIPath>().velocity.magnitude
+                    ); //moveSpeedModificator.GetThresholdPercent(Machine.Target.GetComponent<AIPath>().velocity.magnitude);
+                    accuracy *= Mathf.Lerp(moveSpeedModificator.Value.y, moveSpeedModificator.Value.x, moveSpeedThresholdPercent) / 100f;
+
+                    AccuracyModificator distanceModificator = Machine.Combat.Range.DistanceAccuracyModificator;
+                    float distanceThresholdPercent = Mathf.InverseLerp(
+                        moveSpeedModificator.Threshold.x,
+                        moveSpeedModificator.Threshold.y,
+                        Vector3.Distance(Machine.Target.transform.position, Machine.transform.position)
+                    );
+                    accuracy *= Mathf.Lerp(distanceModificator.Value.y, distanceModificator.Value.x, distanceThresholdPercent) / 100f;
+                }
+
+                Machine._stateText.text = accuracy.ToString();
+
+                if (accuracy >= Random.value * 100)
+                {
                     Machine.Target.TakeHit();
+
+                    if (Machine.AccuracyPseudoRandomMultiplier > 0)
+                        Machine.AccuracyPseudoRandomMultiplier = 0;
+                    else
+                        Machine.AccuracyPseudoRandomMultiplier--;
+                }
+                else
+                {
+                    Machine.AccuracyPseudoRandomMultiplier++;
+                }
             }
 
             Machine.ChargeAttackPoint(Machine.CurrentAttackType, Machine.CurrentAttack.PrepareTime);

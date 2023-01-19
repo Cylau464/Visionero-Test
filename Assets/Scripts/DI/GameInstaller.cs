@@ -9,7 +9,7 @@ namespace DI
     public class GameInstaller : MonoInstaller
     {
         [SerializeField] private EnemySpawner _enemySpawner;
-        [SerializeField] private UnitHealth[] _defendedBuildings;
+        [SerializeField] private CapturePoint[] _capturePoints;
         [SerializeField] private ControlledUnitsGroup[] _controlledUnitsGroups;
         [SerializeField] private GameProgressHandler _gameProgressHandler;
 
@@ -17,7 +17,7 @@ namespace DI
         {
             Container.BindInstance(_enemySpawner).AsSingle();
             Container.BindInstance(_gameProgressHandler).AsSingle();
-            Container.BindInstances(_defendedBuildings);
+            Container.BindInstances(_capturePoints);
             Container.BindInstances(_controlledUnitsGroups);
 
             Container.Bind<CharacterStateMachine.Factory>().AsSingle();

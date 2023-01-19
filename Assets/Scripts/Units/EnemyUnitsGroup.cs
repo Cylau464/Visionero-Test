@@ -1,5 +1,4 @@
-﻿using States.Characters;
-using States.Characters.Enemy;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -7,47 +6,50 @@ namespace Units
 {
     public class EnemyUnitsGroup : UnitsGroup
     {
-        //[SerializeField] private Boat _boatPrefab;
+        [Inject] private List<CapturePoint> _capturePoints;
+        public CapturePoint SelectedCapturePoint { get; private set; }
 
-        //private Boat _boat;
-
-        protected override void Awake()
+        private void Start()
         {
-            base.Awake();
+            foreach (CapturePoint point in _capturePoints)
+                point.OnCaptured += OnPointCaptured;
 
-            //foreach (CharacterStateMachine unit in _units)
-            //    unit.gameObject.SetActive(false);
-
-            //_boat = Instantiate(_boatPrefab, transform.position, transform.rotation);
-            //transform.parent = _boat.transform;
-            //_boat.OnInitialized += OnBoatInitialized;
-            //_boat.OnArrived += OnArrived;
+            SelectCapturePoint();
         }
 
-        //private void OnDestroy()
-        //{
-        //    _boat.OnInitialized -= OnBoatInitialized;
-        //    _boat.OnArrived -= OnArrived;
-        //}
+        private void SelectCapturePoint()
+        {
+            float minDistance = float.MaxValue;
+            SelectedCapturePoint = null;
 
-        //private void OnArrived()
-        //{
-        //    transform.parent = null;
+            foreach (CapturePoint point in _capturePoints)
+            {
+                float distance = Vector3.Distance(point.transform.position, transform.position);
 
-        //    foreach (CharacterStateMachine unit in _units)
-        //        (unit as EnemyStateMachine).Arrived();
-        //}
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    SelectedCapturePoint = point;
+                }
+            }
 
-        //private void OnBoatInitialized()
-        //{
-        //    //_boat.OnInitialized -= OnBoatInitialized;
+            if (SelectedCapturePoint != null)
+            {
+                Vector2 offset = Random.insideUnitCircle * SelectedCapturePoint.CaptureRadius;
+                Vector3 destination = SelectedCapturePoint.transform.position;
+                destination.x += offset.x;
+                destination.z += offset.y;
+                SetGroupDestination(destination);
+            }
+        }
 
-        //    foreach (CharacterStateMachine unit in _units)
-        //    {
-        //        unit.gameObject.SetActive(true);
-        //        unit.transform.localPosition = Vector3.zero;
-        //    }
-        //}
+        private void OnPointCaptured(CapturePoint point)
+        {
+            point.OnCaptured -= OnPointCaptured;
+            _capturePoints.Remove(point);
+
+            SelectCapturePoint();
+        }
 
         public class Factory : PrefabFactory<EnemyUnitsGroup> { } 
     }

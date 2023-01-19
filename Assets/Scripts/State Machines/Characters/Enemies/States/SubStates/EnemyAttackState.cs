@@ -11,15 +11,5 @@ namespace States.Characters.Enemy
         public EnemyAttackState(EnemyStateMachine machine, EnemyStateFactory factory, AttackType attackType) : base(machine, factory, attackType)
         {
         }
-
-        protected override UnitHealth GetTarget()
-        {
-            UnitHealth target = base.GetTarget();
-
-            if (target == null)
-                target = Machine.GetClosestTarget(Machine.BuildngsTargets);
-
-            return target;
-        }
     }
 }
