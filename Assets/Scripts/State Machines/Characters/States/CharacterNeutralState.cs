@@ -8,7 +8,6 @@ namespace States.Characters
     public class CharacterNeutralState : CharacterState
     {
         private float _currentBattleDelay;
-        //private bool _hasTarget;
 
         public CharacterNeutralState(CharacterStateMachine machine, CharacterStateFactory factory) : base(machine, factory)
         {
@@ -62,34 +61,20 @@ namespace States.Characters
             {
                 UpdateTarget();
 
-                if (Machine.AIPath.reachedDestination == true)
+                if (Machine.DontAttackUntilReachedDestination == false)
                 {
                     SwitchState(Factory.Battle());
+                    return;
                 }
-                else
+                else if (Machine.AIPath.reachedDestination == true)
                 {
-                    if (Machine.CurrentAttackType == AttackType.Melee && Machine.UnitsGroup.CurrentBattleDelayAfterMove <= Time.time)
-                    {
-                        SwitchState(Factory.Battle());
-                    }
+                    SwitchState(Factory.Battle());
+                    return;
                 }
+
+                if (Machine.CurrentAttackType == AttackType.Melee && Machine.UnitsGroup.CurrentBattleDelayAfterMove <= Time.time)
+                    SwitchState(Factory.Battle());
             }
         }
-
-        //private void OnFindTarget(CharacterStateMachine machine)
-        //{
-        //    _hasTarget = true;
-
-        //    //if (Machine.IgnoreTargetsWhenMove == true
-        //    //    && Machine.AIPath.remainingDistance /*Machine.Agent.remainingDistance */> Machine.StopIgnoringDestinationDistance)
-        //    //    return;
-
-        //    //SwitchState(Factory.Battle());
-        //}
-
-        //private void OnLostTarget(CharacterStateMachine machine)
-        //{
-        //    _hasTarget = false;
-        //}
     }
 }

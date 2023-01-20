@@ -268,7 +268,7 @@ namespace RTS_Cam
             float targetHeight = Mathf.Lerp(minHeight, maxHeight, zoomPos);
             float difference = 0; 
 
-            if(distanceToGround != targetHeight)
+            if(autoHeight == true && distanceToGround != targetHeight)
                 difference = targetHeight - distanceToGround;
 
             m_Transform.position = Vector3.Lerp(m_Transform.position, 

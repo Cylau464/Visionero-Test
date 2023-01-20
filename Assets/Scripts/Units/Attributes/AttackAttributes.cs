@@ -1,9 +1,11 @@
-﻿using Units.Modificators;
+﻿using NaughtyAttributes;
+using Units.Modificators;
 using UnityEngine;
 
 namespace Units.Attributes
 {
-    public enum AttackType { Melee, Range, Both }
+    public enum AttackType { None, Melee, Range, Both }
+    public enum DamageType { Target, AOE }
 
     [System.Serializable]
     public class AttackAttributes
@@ -17,6 +19,8 @@ namespace Units.Attributes
     [System.Serializable]
     public class RangeAttackAttrubtes : AttackAttributes
     {
+        [field: SerializeField] public DamageType DamageType { get; private set; }
+        [field: SerializeField] public Projectile Projectile { get; private set; }
         [field: SerializeField, Tooltip("If the target is closer than this distance, the unit cannot attack it in ranged combat.")]
         public float MinDistance { get; private set; }
         [field: SerializeField] public float AimTime { get; private set; }

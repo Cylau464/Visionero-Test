@@ -69,7 +69,7 @@ namespace Units
 
         private void SpawnUnits()
         {
-            Vector3[] positions = GetUnitsPositions(transform.position, _unitsCount);
+            Vector3[] positions = GetUnitsPositions(_unitsPivot.position, _unitsCount);
             CharacterStateMachine unit;
             UnitHealth[] unitsHealth = new UnitHealth[_unitsCount];
 
@@ -148,7 +148,10 @@ namespace Units
             if (someUnitInGroupHasTarget == false)
             {
                 foreach (CharacterStateMachine unit in _units)
-                    unit.SwitchAttackType(AttackType.Range, false);
+                {
+                    if(unit.Combat.AttackType != AttackType.Melee)
+                        unit.SwitchAttackType(AttackType.Range, false);
+                }
             }
 
 

@@ -37,7 +37,7 @@ namespace States.Characters
         public override void Exit()
         {
             Machine.OnAttackTypeSwitched -= OnAttackTypeSwitched;
-            Machine.AIPath.maxSpeed = Machine.Movement.MoveSpeed;
+            Machine.SetMoveSpeed(Machine.Movement.MoveSpeed);
         }
 
         public override void InitializeSubState()
@@ -75,7 +75,7 @@ namespace States.Characters
             {
                 Machine.SetDestination(Machine.BattleHeldedPosition);
                 _curIgnoreTargetTime = Time.time + _ignoreTargetTime;
-                Machine.AIPath.maxSpeed = Machine.Movement.MaxChaseMoveSpeed;
+                Machine.SetMoveSpeed(Machine.Movement.MaxChaseMoveSpeed);
                 return true;
             }
 

@@ -280,6 +280,10 @@ MonoBehaviour:
   _targetMask:
     serializedVersion: 2
     m_Bits: 64
+  <RangeAttackProjectilePoint>k__BackingField: {fileID: 0}
+  <DontAttackUntilReachedDestination>k__BackingField: 1
+  _deadParticle: {fileID: 6837061768053742933, guid: c041548ad5f52014d8ae27de23cf2764,
+    type: 3}
   Target: {fileID: 0}
   AccuracyPseudoRandomMultiplier: 0
   BattleHeldedPosition: {x: 0, y: 0, z: 0}

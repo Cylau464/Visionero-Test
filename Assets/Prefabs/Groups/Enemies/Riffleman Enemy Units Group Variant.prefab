@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &5877392019534157549
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3399773533228754229, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
+        type: 3}
+      propertyPath: _unitPrefab
+      value: 
+      objectReference: {fileID: 7924621839651816501, guid: d955de30a81559840a16ce175be0e3bb,
+        type: 3}
+    - target: {fileID: 3399773533228754229, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
+        type: 3}
+      propertyPath: _unitsCount
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 5304927476652504768, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
+        type: 3}
+      propertyPath: m_Name
+      value: Riffleman Enemy Units Group Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 5304927476652504770, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5304927476652504770, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -14.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 5304927476652504770, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5304927476652504770, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -12.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 5304927476652504770, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5304927476652504770, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5304927476652504770, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5304927476652504770, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5304927476652504770, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5304927476652504770, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5304927476652504770, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d91ba9e7a3a491a4692dbc3a56a814c0, type: 3}

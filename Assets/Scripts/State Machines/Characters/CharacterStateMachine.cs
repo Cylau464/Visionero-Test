@@ -34,25 +34,14 @@ namespace States.Characters
         [SerializeField] private Image _melee;
         [SerializeField] public TMP_Text _stateText;
         [SerializeField] private SphereCollider _agroTrigger;
-        //[SerializeField] private float _agroRadius = 5f;
         [SerializeField] private LayerMask _targetMask;
-        //[SerializeField] private bool _ignoreTargetsWhenMove;
-        //public bool IgnoreTargetsWhenMove => _ignoreTargetsWhenMove;
-        //[SerializeField] private float _stopIgnoringDestinationDistance = 2f;
-        //public float StopIgnoringDestinationDistance => _stopIgnoringDestinationDistance;
+        [field: SerializeField] public Transform RangeAttackProjectilePoint { get; private set; }
+        [field: SerializeField] public bool DontAttackUntilReachedDestination { get; private set; } = true;
+        [SerializeField] private GameObject _deadParticle;
 
-
-        //[Header("Attack Properties")]
-        //[SerializeField] private float _attackRadius = 1f;
-        //public float AttackRadius => _attackRadius;
-        //[SerializeField] private int _damage;
-        //public int Damage => _damage;
-        //[SerializeField] private float _attackInterval = 1f;
-        //public float AttackInterval => _attackInterval;
-        //[SerializeField, Range(0f, 1f)] private float _accuracy = .5f;
-        //public float Accuracy => _accuracy;
         private Coroutine _chargingAttackCor;
 
+        private float _moveSpeedModificator = 1f;
         private List<UnitHealth> _targets = new List<UnitHealth>();
         public IList<UnitHealth> Targets => _targets.AsReadOnly();
         [HideInInspector] public UnitHealth Target = null;
@@ -93,7 +82,7 @@ namespace States.Characters
         {
             base.Start();
 
-            _aiPath.maxSpeed = _config.Movement.MoveSpeed;
+            SetMoveSpeed(_config.Movement.MoveSpeed);
             _aiPath.rotationSpeed = _config.Movement.RotationSpeed;
 
             _health.Init(_config.Health);
@@ -145,6 +134,8 @@ namespace States.Characters
             _collider.enabled = false;
             _aiPath.enabled = false;
             OnDead?.Invoke(this);
+
+            Instantiate(_deadParticle, transform.position + Vector3.up, transform.rotation);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -319,6 +310,23 @@ namespace States.Characters
                 MeleeAttackCharged = false;
             else
                 RangeAttackCharged = false;
+        }
+
+        public void SetMoveSpeed(float moveSpeed)
+        {
+            _aiPath.maxSpeed = moveSpeed * _moveSpeedModificator;
+        }
+
+        public void SetMoveSpeedMofidicator(float modificator, float duration)
+        {
+            _moveSpeedModificator = modificator;
+            CancelInvoke();
+            Invoke(nameof(ResetSpeedModificator), duration);
+        }
+
+        private void ResetSpeedModificator()
+        {
+            _moveSpeedModificator = 1f;
         }
 
         public class Factory : PrefabFactory<CharacterStateMachine> { }

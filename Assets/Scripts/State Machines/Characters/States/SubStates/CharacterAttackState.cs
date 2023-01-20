@@ -59,10 +59,10 @@ namespace States.Characters
                 float accuracy;
 
                 if (_currentAttackType == AttackType.Melee)
-                    accuracy = Mathf.Max(0f, Machine.Combat.Melee.Accuracy + Machine.Combat.Melee.Accuracy * Machine.AccuracyPseudoRandomMultiplier);
+                    accuracy = Mathf.Max(0f, Machine.Combat.Melee.Accuracy + Machine.Combat.Melee.Accuracy / 2f * Machine.AccuracyPseudoRandomMultiplier);
                 else
                 {
-                    accuracy = Mathf.Max(0f, Machine.Combat.Range.Accuracy + Machine.Combat.Range.Accuracy * Machine.AccuracyPseudoRandomMultiplier);
+                    accuracy = Mathf.Max(0f, Machine.Combat.Range.Accuracy + Machine.Combat.Range.Accuracy / 2f * Machine.AccuracyPseudoRandomMultiplier);
 
                     AccuracyModificator moveSpeedModificator = Machine.Combat.Range.MoveSpeedAccuracyModificator;
                     float moveSpeedThresholdPercent = Mathf.InverseLerp(
@@ -85,7 +85,19 @@ namespace States.Characters
 
                 if (accuracy >= Random.value * 100)
                 {
-                    Machine.Target.TakeHit();
+                    if (_currentAttackType == AttackType.Range)
+                    {
+                        Projectile projectile = GameObject.Instantiate(Machine.Combat.Range.Projectile, Machine.RangeAttackProjectilePoint.position, Machine.RangeAttackProjectilePoint.rotation);
+                        
+                        if(Machine.Combat.Range.DamageType == DamageType.AOE)
+                            projectile.Launch(Machine.Target.transform.position, true);
+                        else
+                            projectile.Launch(Machine.Target);
+                    }
+                    else
+                    {
+                        Machine.Target.TakeHit();
+                    }
 
                     if (Machine.AccuracyPseudoRandomMultiplier > 0)
                         Machine.AccuracyPseudoRandomMultiplier = 0;
@@ -94,6 +106,12 @@ namespace States.Characters
                 }
                 else
                 {
+                    if (_currentAttackType == AttackType.Range)
+                    {
+                        Projectile projectile = GameObject.Instantiate(Machine.Combat.Range.Projectile, Machine.RangeAttackProjectilePoint.position, Machine.RangeAttackProjectilePoint.rotation);
+                        projectile.Launch(Machine.Target.transform.position, false);
+                    }
+
                     Machine.AccuracyPseudoRandomMultiplier++;
                 }
             }
