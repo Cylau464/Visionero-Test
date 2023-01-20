@@ -15,6 +15,11 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 3399773533228754229, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
         type: 3}
+      propertyPath: _unitsCount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399773533228754229, guid: d91ba9e7a3a491a4692dbc3a56a814c0,
+        type: 3}
       propertyPath: _minDistanceBtwUnits
       value: 1.5
       objectReference: {fileID: 0}
