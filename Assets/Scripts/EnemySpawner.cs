@@ -8,6 +8,7 @@ using Random = UnityEngine.Random;
 
 public class EnemySpawner : MonoBehaviour
 {
+    [SerializeField] private float _startDelay;
     [SerializeField] private Wave[] _waves;
     [SerializeField] private Transform _spawnCenterPoint;
     //[SerializeField] private float _spawnRadius = 30f;
@@ -28,6 +29,8 @@ public class EnemySpawner : MonoBehaviour
 
     private IEnumerator Spawn()
     {
+        yield return new WaitForSeconds(_startDelay);
+
         Vector3 spawnPoint;
         EnemyUnitsGroup enemy;
 
