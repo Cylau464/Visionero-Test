@@ -12,6 +12,7 @@ public class Projectile : MonoBehaviour
     [SerializeField] private GameObject _hitParticle;
     [Space]
     [SerializeField] private bool _aoeDamage;
+    [SerializeField, ShowIf(nameof(_aoeDamage)), Range(0, 100)] private int _hitChance = 25;
     [SerializeField, ShowIf(nameof(_aoeDamage))] private float _damageRadius;
     [SerializeField, ShowIf(nameof(_aoeDamage))] private float _slowDownRadius;
     [SerializeField, ShowIf(nameof(_aoeDamage)), Range(0f, 1f)] private float _slowDownModificator = .5f;
@@ -40,18 +41,20 @@ public class Projectile : MonoBehaviour
 
     private IEnumerator MoveToPosition(Vector3 targetPos)
     {
-        Vector3 startPos = transform.position;
         float startDistance = Vector3.Distance(transform.position, targetPos);
         float distance = Vector3.Distance(transform.position, targetPos);
+        Vector3 currentPos = transform.position;
+        Vector3 moveDir;
 
         while (distance > 0.2f)
         {
             float y = _trajectory.Evaluate(Mathf.InverseLerp(startDistance, 0.5f, distance)) * _maxHeight;
-            Vector3 pos = Vector3.MoveTowards(transform.position, targetPos, _moveSpeed * Time.deltaTime);
-            distance = Vector3.Distance(pos, targetPos);
-            //pos.y = startPos.y + y;
+            currentPos = Vector3.MoveTowards(currentPos, targetPos, _moveSpeed * Time.deltaTime);
+            distance = Vector3.Distance(currentPos, targetPos);
+            Vector3 pos = currentPos + Vector3.up * y;
+            moveDir = pos - transform.position;
             transform.position = pos;
-            transform.right = -(targetPos - transform.position).normalized;
+            transform.up = -moveDir.normalized;
 
             yield return null;
         }
@@ -64,7 +67,10 @@ public class Projectile : MonoBehaviour
             foreach (Collider damageTarget in damageTargets)
             {
                 if (damageTarget.TryGetComponent(out UnitHealth unit) == true)
-                    unit.TakeHit();
+                {
+                    if (_hitChance >= Random.value * 100)
+                        unit.TakeHit();
+                }
             }
 
             foreach (Collider slowDownTarget in slowDownTargets)
@@ -80,24 +86,28 @@ public class Projectile : MonoBehaviour
 
     private IEnumerator MoveToTarget(UnitHealth target)
     {
-        Vector3 startPos = transform.position;
         float startDistance = Vector3.Distance(transform.position, target.transform.position);
         float distance = Vector3.Distance(transform.position, target.transform.position);
+        Vector3 currentPos = transform.position;
+        Vector3 targetPos;
+        Vector3 moveDir;
 
         while (distance > 0.2f)
         {
+            targetPos = target.transform.position + Vector3.up;
             float y = _trajectory.Evaluate(Mathf.InverseLerp(startDistance, 0.5f, distance)) * _maxHeight;
-            Vector3 pos = Vector3.MoveTowards(transform.position, target.transform.position, _moveSpeed * Time.deltaTime);
-            distance = Vector3.Distance(pos, target.transform.position);
-            //pos.y = startPos.y + y;
+            currentPos = Vector3.MoveTowards(currentPos, targetPos, _moveSpeed * Time.deltaTime);
+            distance = Vector3.Distance(currentPos, targetPos);
+            Vector3 pos = currentPos + Vector3.up * y;
+            moveDir = pos - transform.position;
             transform.position = pos;
-            transform.right = -(target.transform.position - transform.position).normalized;
+            transform.up = -moveDir.normalized;
             
             yield return null;
         }
 
         target.TakeHit();
         Instantiate(_hitParticle, transform.position, transform.rotation);
-        Destroy(gameObject, _destroyAfterDestinationDelay);
+        Destroy(gameObject);
     }
 }
