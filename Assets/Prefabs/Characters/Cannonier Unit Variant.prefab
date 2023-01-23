@@ -452,7 +452,7 @@ PrefabInstance:
     - target: {fileID: 4583647734548845603, guid: 908f6fbbbe1bdb4479aa2cc6804a73a0,
         type: 3}
       propertyPath: m_Name
-      value: Cannonier Unit Variant 1
+      value: Cannonier Unit Variant
       objectReference: {fileID: 0}
     - target: {fileID: 5618399966112299856, guid: 908f6fbbbe1bdb4479aa2cc6804a73a0,
         type: 3}
@@ -460,6 +460,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 40f5744856c3b37488705f205c63b8f3,
         type: 2}
+    - target: {fileID: 5618399966112299856, guid: 908f6fbbbe1bdb4479aa2cc6804a73a0,
+        type: 3}
+      propertyPath: _deadParticle
+      value: 
+      objectReference: {fileID: 871312489320899015, guid: 2d2512403e1ec3149916914c3e6331e9,
+        type: 3}
     - target: {fileID: 5618399966112299856, guid: 908f6fbbbe1bdb4479aa2cc6804a73a0,
         type: 3}
       propertyPath: <RangeAttackProjectilePoint>k__BackingField

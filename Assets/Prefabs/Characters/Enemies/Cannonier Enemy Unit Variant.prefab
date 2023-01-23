@@ -401,6 +401,12 @@ PrefabInstance:
         type: 2}
     - target: {fileID: 1448273293640896456, guid: 9c311776bcd50c647b43e18d12b14a8c,
         type: 3}
+      propertyPath: _deadParticle
+      value: 
+      objectReference: {fileID: 871312489320899015, guid: 2d2512403e1ec3149916914c3e6331e9,
+        type: 3}
+    - target: {fileID: 1448273293640896456, guid: 9c311776bcd50c647b43e18d12b14a8c,
+        type: 3}
       propertyPath: <RangeAttackProjectilePoint>k__BackingField
       value: 
       objectReference: {fileID: 2415102770396332761}

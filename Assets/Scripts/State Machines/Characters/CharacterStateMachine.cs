@@ -137,6 +137,8 @@ namespace States.Characters
             OnDead?.Invoke(this);
 
             Instantiate(_deadParticle, transform.position + Vector3.up, transform.rotation);
+
+            Destroy(gameObject, 5f);
         }
 
         private void OnTriggerEnter(Collider other)
