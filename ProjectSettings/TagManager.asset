@@ -15,8 +15,8 @@ TagManager:
   - UI
   - Enemy
   - NavMesh
-  - NavMeshObstacles
   - 
+  - Obstacles
   - 
   - 
   - 

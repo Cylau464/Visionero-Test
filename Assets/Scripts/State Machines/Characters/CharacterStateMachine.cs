@@ -35,6 +35,7 @@ namespace States.Characters
         [SerializeField] public TMP_Text _stateText;
         [SerializeField] private SphereCollider _agroTrigger;
         [SerializeField] private LayerMask _targetMask;
+        [SerializeField] private LayerMask _obstaclesMask;
         [field: SerializeField] public Transform RangeAttackProjectilePoint { get; private set; }
         [field: SerializeField] public bool DontAttackUntilReachedDestination { get; private set; } = true;
         [SerializeField] private GameObject _deadParticle;
@@ -68,7 +69,7 @@ namespace States.Characters
         public UnitsGroup UnitsGroup { get; private set; }
         public Vector3 HeldedPosition { get; private set; }
         [HideInInspector] public Vector3 BattleHeldedPosition;
-        
+
         protected new CharacterStateFactory States { get; private set; }
 
         public Action OnHeldedPositionSetted { get; set; }
@@ -192,7 +193,7 @@ namespace States.Characters
             }
         }
 
-        public UnitHealth GetClosestTarget(UnitHealth[] targets = null)
+        public UnitHealth GetClosestTarget(UnitHealth[] targets = null, bool ignoreObstacles = false)
         {
             if (targets == null)
                 targets = _targets.ToArray();
@@ -206,6 +207,14 @@ namespace States.Characters
                 foreach (UnitHealth target in targets)
                 {
                     if (target.IsDead == true) continue;
+
+                    if (ignoreObstacles == false)
+                    {
+                        Vector3 dir = target.transform.position - transform.position;
+
+                        if (Physics.Raycast(transform.position + Vector3.up, dir.normalized, dir.magnitude, _obstaclesMask) == true)
+                            continue;
+                    }
 
                     if (onlyFreeTargets == true && target.IsTargeted == true)
                     {
@@ -327,6 +336,23 @@ namespace States.Characters
         private void ResetSpeedModificator()
         {
             _moveSpeedModificator = 1f;
+        }
+
+        public bool IsHaveTargetInSight()
+        {
+            if (Targets.Count == 0) return false;
+
+            foreach (UnitHealth target in Targets)
+            {
+                Vector3 dir = (target.transform.position - transform.position);
+
+                if (Physics.Raycast(transform.position + Vector3.up, dir.normalized, dir.magnitude, _obstaclesMask) == true)
+                    continue;
+
+                return true;
+            }
+
+            return false;
         }
 
         public class Factory : PrefabFactory<CharacterStateMachine> { }

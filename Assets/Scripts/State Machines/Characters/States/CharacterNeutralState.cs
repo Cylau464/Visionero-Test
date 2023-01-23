@@ -57,7 +57,7 @@ namespace States.Characters
 
         private void CheckTargets()
         {
-            if (Machine.Targets.Count > 0)
+            if (Machine.Targets.Count > 0 && Machine.IsHaveTargetInSight())
             {
                 UpdateTarget();
 

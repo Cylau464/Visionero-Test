@@ -523,6 +523,9 @@ MonoBehaviour:
   _targetMask:
     serializedVersion: 2
     m_Bits: 8
+  _obstaclesMask:
+    serializedVersion: 2
+    m_Bits: 512
   <RangeAttackProjectilePoint>k__BackingField: {fileID: 0}
   <DontAttackUntilReachedDestination>k__BackingField: 0
   _deadParticle: {fileID: 6837061768053742933, guid: c041548ad5f52014d8ae27de23cf2764,
