@@ -1018,6 +1018,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b37976156105cca488dea5e23928efcf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _startDelay: 0
   _waves:
   - EnemyForSpawn:
     - {fileID: 2873172398978315291, guid: 40d6197175464d54eb9f005593a26d87, type: 3}
@@ -1548,7 +1549,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &422957548
 Transform:
   m_ObjectHideFlags: 0
@@ -1580,10 +1581,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _virtualCamera: {fileID: 578123279}
-  _minCameraDistance: 15
-  _maxCameraDistance: 40
-  _zoomSensitivity: 1
   _orbitMoveInputAxis: Mouse X
+  _orbitalSensitivity: 400
+  _verticalMinMax: {x: 15, y: 50}
+  _verticalSensitivity: 10
+  _zoomMinMax: {x: 15, y: 40}
+  _zoomSensitivity: 50
 --- !u!1001 &470553385
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1731,7 +1734,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 534317865}
-  m_LocalRotation: {x: 0.0000000065845973, y: 0.92387956, z: -0.38268343, w: 0.000000015896626}
+  m_LocalRotation: {x: 0.000000006584597, y: 0.92387956, z: -0.38268343, w: 0.000000015896624}
   m_LocalPosition: {x: 0, y: 40, z: 40}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1952,7 +1955,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 578123277}
-  m_LocalRotation: {x: 0.0000000065845973, y: 0.92387956, z: -0.38268343, w: 0.000000015896626}
+  m_LocalRotation: {x: 0.000000006584597, y: 0.92387956, z: -0.38268343, w: 0.000000015896624}
   m_LocalPosition: {x: 0, y: 40, z: 40}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3511,6 +3514,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b37976156105cca488dea5e23928efcf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _startDelay: 0
   _waves:
   - EnemyForSpawn:
     - {fileID: 9132979961581499352, guid: 10642aeabe8355a4baf1a97c65250c65, type: 3}
@@ -4736,6 +4740,10 @@ PrefabInstance:
     - target: {fileID: 120296, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: m_Name
       value: RTS_Camera
+      objectReference: {fileID: 0}
+    - target: {fileID: 120296, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 459968, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: m_RootOrder
