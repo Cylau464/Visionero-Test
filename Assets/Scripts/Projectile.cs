@@ -86,25 +86,53 @@ public class Projectile : MonoBehaviour
 
     private IEnumerator MoveToTarget(UnitHealth target)
     {
-        float startDistance = Vector3.Distance(transform.position, target.transform.position);
-        float distance = Vector3.Distance(transform.position, target.transform.position);
-        Vector3 currentPos = transform.position;
-        Vector3 targetPos;
-        Vector3 moveDir;
+        Vector3 startPos = transform.position;
+        Vector3 floorStartPos = startPos;
+        floorStartPos.y = 0f;
+        Vector3 floorTargetPos = target.transform.position;
+        Vector3 floorCurrentPos = transform.position;
+        float distance = Vector3.Distance(floorStartPos, floorTargetPos);
 
         while (distance > 0.2f)
         {
-            targetPos = target.transform.position + Vector3.up;
-            float y = _trajectory.Evaluate(Mathf.InverseLerp(startDistance, 0.5f, distance)) * _maxHeight;
-            currentPos = Vector3.MoveTowards(currentPos, targetPos, _moveSpeed * Time.deltaTime);
-            distance = Vector3.Distance(currentPos, targetPos);
-            Vector3 pos = currentPos + Vector3.up * y;
-            moveDir = pos - transform.position;
-            transform.position = pos;
-            transform.up = -moveDir.normalized;
-            
+            if (target != null)
+                floorTargetPos = target.transform.position;
+
+            floorCurrentPos = transform.position;
+            floorStartPos.y = 0f;
+            floorCurrentPos.y = 0f;
+            distance = Vector3.Distance(floorStartPos, floorTargetPos);
+            Vector3 nextPos = Vector3.MoveTowards(floorCurrentPos, floorTargetPos, _moveSpeed * Time.deltaTime);
+            float baseY = Mathf.Lerp(startPos.y, floorTargetPos.y, (nextPos - startPos).magnitude / distance);
+            float arc = _maxHeight * (nextPos - startPos).magnitude * (nextPos - floorTargetPos).magnitude / (-0.25f * distance * distance);
+            nextPos.y = baseY + arc;
+
+            // Rotate to face the next position, and then move there
+            transform.rotation = Quaternion.LookRotation(nextPos - transform.position);
+            transform.position = nextPos;
+
             yield return null;
         }
+
+        //float startDistance = Vector3.Distance(transform.position, target.transform.position);
+        //float distance = Vector3.Distance(transform.position, target.transform.position);
+        //Vector3 currentPos = transform.position;
+        //Vector3 targetPos;
+        //Vector3 moveDir;
+
+        //while (distance > 0.2f)
+        //{
+        //    targetPos = target.transform.position + Vector3.up;
+        //    float y = _trajectory.Evaluate(Mathf.InverseLerp(startDistance, 0.5f, distance)) * _maxHeight;
+        //    currentPos = Vector3.MoveTowards(currentPos, targetPos, _moveSpeed * Time.deltaTime);
+        //    distance = Vector3.Distance(currentPos, targetPos);
+        //    Vector3 pos = currentPos + Vector3.up * y;
+        //    moveDir = pos - transform.position;
+        //    transform.position = pos;
+        //    transform.up = -moveDir.normalized;
+            
+        //    yield return null;
+        //}
 
         target.TakeHit();
         Instantiate(_hitParticle, transform.position, transform.rotation);
