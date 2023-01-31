@@ -509,7 +509,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88f2ed125d689a546ac09471026e4331, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _config: {fileID: 11400000, guid: 486c4ff564d2e3d458177e1aa570ec92, type: 2}
+  _config: {fileID: 11400000, guid: 7b2e5c748de51954f8e023795a9ec588, type: 2}
   _aiPath: {fileID: 2950361540848027416}
   _health: {fileID: 5662986366337956025}
   _animationController: {fileID: 7124155117025261175}

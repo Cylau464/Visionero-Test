@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Health>k__BackingField: 1
   <Movement>k__BackingField:
-    <MoveSpeed>k__BackingField: 8
-    <MaxChaseMoveSpeed>k__BackingField: 17
+    <MoveSpeed>k__BackingField: 16
+    <MaxChaseMoveSpeed>k__BackingField: 34
     <RotationSpeed>k__BackingField: 240
   <Combat>k__BackingField:
     <AttackType>k__BackingField: 1
@@ -24,7 +24,7 @@ MonoBehaviour:
       <PrepareTime>k__BackingField: 1
       <Distance>k__BackingField: 3
       <AgroRadius>k__BackingField: 15
-      <Accuracy>k__BackingField: 40
+      <Accuracy>k__BackingField: 80
     <Range>k__BackingField:
       <PrepareTime>k__BackingField: 1
       <Distance>k__BackingField: 15
