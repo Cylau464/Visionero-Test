@@ -1,12 +1,9 @@
 ﻿using Pathfinding;
 using States.Characters;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Units.Attributes;
-using Unity.VisualScripting;
-using UnityEditor.Sprites;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
